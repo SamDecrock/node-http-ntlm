@@ -1,0 +1,9 @@
+{
+  "name": "httpntlm",
+  "version": "0.0.1",
+  "dependencies": {
+    "httpreq": "~0.3.4",
+    "async": "~0.2.9",
+    "agentkeepalive": "~0.1.5"
+  }
+}
