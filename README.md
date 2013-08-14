@@ -3,7 +3,7 @@ node-http-ntlm
 
 Node.js module to authenticate using HTTP NTLM
 
-Ported to JavaScript from python-ntlm: https://code.google.com/p/python-ntlm/
+Ported to JavaScript from python-ntlm: https://code.google.com/p/python-ntlm/ (currently one of the hardest things I did, but I like the result)
 
 __How to use__
 
