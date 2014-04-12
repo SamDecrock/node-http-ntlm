@@ -1,12 +1,27 @@
 var async = require('async');
+var url = require('url');
 var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
-var HttpsAgent = require('agentkeepalive').HttpsAgent;
-var keepaliveAgent = new HttpsAgent();
 
 exports.get = function(options, callback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
+
+	// is https?
+	var isHttps = false;
+	var reqUrl = url.parse(options.url);
+	if(reqUrl.protocol == 'https:') isHttps = true;
+
+	// set keepaliveAgent (http or https):
+	var keepaliveAgent;
+
+	if(isHttps){
+		var HttpsAgent = require('agentkeepalive').HttpsAgent;
+		keepaliveAgent = new HttpsAgent();
+	}else{
+		var Agent = require('agentkeepalive');
+		keepaliveAgent = new Agent();
+	}
 
 	async.waterfall([
 		function ($){

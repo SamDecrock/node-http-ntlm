@@ -29,11 +29,11 @@ httpntlm.get({
 });
 ```
 
-Currently only supports __https__
+Should support __http__ and __https__ now. Though, I've not tested it on http.
 
 ## Advanced
 
-If you want to use the NTLM-functions yourself, you can access the ntlm-library like this:
+If you want to use the NTLM-functions yourself, you can access the ntlm-library like this (https example):
 
 ```js
 var ntlm = require('httpntlm').ntlm;
