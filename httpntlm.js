@@ -40,3 +40,5 @@ exports.get = function(options, callback){
 	], callback);
 }
 
+exports.ntlm = ntlm; //if you want to use the NTML functions yourself
+
