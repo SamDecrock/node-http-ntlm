@@ -3,7 +3,7 @@ var url = require('url');
 var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
 
-exports.get = function(options, callback){
+exports.method = function(method, options, callback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
 
@@ -43,7 +43,7 @@ exports.get = function(options, callback){
 			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 			var type3msg = ntlm.createType3Message(type2msg, options);
 
-			httpreq.get(options.url, {
+			httpreq[method](options.url, {
 				headers:{
 					'Connection' : 'Close',
 					'Authorization': type3msg
@@ -53,7 +53,11 @@ exports.get = function(options, callback){
 			}, $);
 		}
 	], callback);
-}
+};
+
+['get', 'put', 'post', 'delete', 'head'].forEach(function(method){
+  exports[method] = exports.method.bind(exports, method);
+});
 
 exports.ntlm = ntlm; //if you want to use the NTML functions yourself
 
