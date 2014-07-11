@@ -1,7 +1,7 @@
 {
   "name": "httpntlm",
   "description": "httpntlm is a Node.js library to do HTTP NTLM authentication",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "dependencies": {
     "httpreq": "~0.3.4",
     "async": "~0.2.9",
@@ -20,6 +20,12 @@
     "url": "git://github.com/SamDecrock/node-http-ntlm.git"
   },
   "main": "./httpntlm",
+  "contributors": [
+    {
+      "name": "Marius Gundersen",
+      "url": "https://github.com/mariusGundersen"
+    }
+  ],
   "licenses": [
     {
       "type": "MIT",
