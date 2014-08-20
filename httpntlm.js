@@ -1,3 +1,4 @@
+var extend = require('node.extend');
 var async = require('async');
 var url = require('url');
 var httpreq = require('httpreq');
@@ -42,15 +43,17 @@ exports.method = function(method, options, callback){
 
 			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 			var type3msg = ntlm.createType3Message(type2msg, options);
-
-			httpreq[method](options.url, {
+			var requestOptions = (typeof options['requestOptions'] === 'object') ? options.requestOptions : {};
+			var mergedOptions = extend(true, {
 				headers:{
 					'Connection' : 'Close',
 					'Authorization': type3msg
 				},
 				allowRedirects: false,
 				agent: keepaliveAgent
-			}, $);
+			}, requestOptions);
+
+			httpreq[method](options.url, mergedOptions, $);
 		}
 	], callback);
 };
