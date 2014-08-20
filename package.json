@@ -5,7 +5,8 @@
   "dependencies": {
     "httpreq": "~0.3.4",
     "async": "~0.2.9",
-    "agentkeepalive": "~0.1.5"
+    "agentkeepalive": "~0.1.5",
+    "node.extend": "~1.0.7"
   },
   "author": {
     "name": "Sam Decrock",
