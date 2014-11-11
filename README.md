@@ -27,6 +27,24 @@ httpntlm.get({
     console.log(res.headers);
     console.log(res.body);
 });
+
+httpntlm.post({
+    url: "http://someotherurl.com",
+    username: 'linux',
+    password: 'rocks',
+    workstation: 'choose.something',
+    domain: '',
+    headers: {
+        'Content-Type': 'text/xml',
+        'Some-Header': 'some.value'
+    },
+    body: message.body
+}, function (err, res){
+    if(err) return err;
+    
+    console.log(res.headers);
+    console.log(res.body);
+});
 ```
 
 Should support __http__ and __https__ now. Though, I've not tested it on http.
