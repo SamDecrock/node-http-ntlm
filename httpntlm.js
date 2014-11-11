@@ -6,6 +6,8 @@ var ntlm = require('./ntlm');
 exports.method = function(method, options, callback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
+	if(!options.headers) options.headers = {};
+	if(!options.body) options.body = '';
 
 	// is https?
 	var isHttps = false;
@@ -43,13 +45,16 @@ exports.method = function(method, options, callback){
 			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 			var type3msg = ntlm.createType3Message(type2msg, options);
 
+			// bring in custom headers, and add necessary ones
+			var headers = options.headers;
+			headers.Connection = 'Close';
+			headers.Authorization = type3msg;
+
 			httpreq[method](options.url, {
-				headers:{
-					'Connection' : 'Close',
-					'Authorization': type3msg
-				},
+				headers: headers,
 				allowRedirects: false,
-				agent: keepaliveAgent
+				agent: keepaliveAgent,
+				body: options.body
 			}, $);
 		}
 	], callback);
