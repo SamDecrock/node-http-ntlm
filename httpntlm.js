@@ -42,14 +42,17 @@ exports.method = function(method, options, callback){
 
 			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 			var type3msg = ntlm.createType3Message(type2msg, options);
+			var headers = options.headers || {}; 
+			var body = options.body || '';
+
+			headers['Connection'] = 'Close';
+			headers['Authorization'] = type3msg;
 
 			httpreq[method](options.url, {
-				headers:{
-					'Connection' : 'Close',
-					'Authorization': type3msg
-				},
+				headers: headers,
 				allowRedirects: false,
-				agent: keepaliveAgent
+				agent: keepaliveAgent,
+				body: body
 			}, $);
 		}
 	], callback);
