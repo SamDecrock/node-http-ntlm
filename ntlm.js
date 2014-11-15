@@ -33,7 +33,7 @@ var flags = {
 	NTLM_Negotiate128                    :  0x20000000,
 	NTLM_NegotiateKeyExchange            :  0x40000000,
 	NTLM_Negotiate56                     :  0x80000000
-}
+};
 var typeflags = {
 	NTLM_TYPE1_FLAGS : 	  flags.NTLM_NegotiateUnicode
 						+ flags.NTLM_NegotiateOEM
@@ -56,7 +56,7 @@ var typeflags = {
 						+ flags.NTLM_NegotiateVersion
 						+ flags.NTLM_Negotiate128
 						+ flags.NTLM_Negotiate56
-}
+};
 
 function createType1Message(options){
 	var domain = escape(options.domain.toUpperCase());
@@ -66,7 +66,7 @@ function createType1Message(options){
 	var BODY_LENGTH = 40;
 
 	var type1flags = typeflags.NTLM_TYPE1_FLAGS;
-	if(!domain || domain == '')
+	if(!domain || domain === '')
 		type1flags = type1flags - flags.NTLM_NegotiateOemDomainSupplied;
 
 	var pos = 0;
@@ -231,7 +231,7 @@ function createType3Message(msg2, options){
 
 function create_LM_hashed_password_v1(password){
 	// fix the password length to 14 bytes
-	var password = password.toUpperCase();
+	password = password.toUpperCase();
 	var passwordBytes = new Buffer(password, 'ascii');
 
 	var passwordBytesPadded = new Buffer(14);
@@ -262,7 +262,7 @@ function insertZerosEvery7Bits(buf){
 	for(var i=0; i<binaryArray.length; i++){
 		newBinaryArray.push(binaryArray[i]);
 
-		if((i+1)%7 == 0){
+		if((i+1)%7 === 0){
 			newBinaryArray.push(0);
 		}
 	}
@@ -316,7 +316,7 @@ function binaryArray2bytes(array){
 		'1101': 'D',
 		'1110': 'E',
 		'1111': 'F'
-	}
+	};
 
  	var bufArray = [];
 
@@ -354,10 +354,10 @@ function calc_resp(password_hash, server_challenge){
     var des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(0,7)), '');
     resArray.push( des.update(server_challenge.slice(0,8)) );
 
-    var des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(7,14)), '');
+    des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(7,14)), '');
     resArray.push( des.update(server_challenge.slice(0,8)) );
 
-    var des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(14,21)), '');
+    des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(14,21)), '');
     resArray.push( des.update(server_challenge.slice(0,8)) );
 
    	return Buffer.concat(resArray);
@@ -378,7 +378,7 @@ function ntlm2sr_calc_resp(responseKeyNT, serverChallenge, clientChallenge){
     return {
     	lmChallengeResponse: lmChallengeResponse,
     	ntChallengeResponse: ntChallengeResponse
-    }
+    };
 }
 
 exports.createType1Message = createType1Message;

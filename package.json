@@ -37,5 +37,8 @@
       "type": "MIT",
       "url": "http://www.opensource.org/licenses/mit-license.php"
     }
-  ]
+  ],
+  "scripts": {
+    "jshint": "jshint *.js"
+  }
 }
