@@ -42,18 +42,16 @@ exports.method = function(method, options, callback){
 
 			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 			var type3msg = ntlm.createType3Message(type2msg, options);
-			var headers = options.headers || {}; 
-			var body = options.body || '';
 
-			headers['Connection'] = 'Close';
-			headers['Authorization'] = type3msg;
+			options.headers = options.headers || {};
+			options.body = options.body || '';
 
-			httpreq[method](options.url, {
-				headers: headers,
-				allowRedirects: false,
-				agent: keepaliveAgent,
-				body: body
-			}, $);
+			options.headers['Connection'] = 'Close';
+			options.headers['Authorization'] = type3msg;
+			options.allowRedirects = false;
+			options.agent = keepaliveAgent;
+
+			httpreq[method](options.url, options, $);
 		}
 	], callback);
 };
@@ -63,4 +61,3 @@ exports.method = function(method, options, callback){
 });
 
 exports.ntlm = ntlm; //if you want to use the NTML functions yourself
-
