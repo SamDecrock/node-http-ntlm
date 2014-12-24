@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var url = require('url');
 var httpreq = require('httpreq');
@@ -32,6 +34,7 @@ exports.method = function(method, options, callback){
 					'Connection' : 'keep-alive',
 					'Authorization': type1msg
 				},
+				timeout: options.timeout || 0,
 				agent: keepaliveAgent
 			}, $);
 		},
@@ -45,21 +48,23 @@ exports.method = function(method, options, callback){
 			var headers = options.headers || {}; 
 			var body = options.body || '';
 
-			headers['Connection'] = 'Close';
-			headers['Authorization'] = type3msg;
+			headers.Connection = 'Close';
+			headers.Authorization = type3msg;
 
 			httpreq[method](options.url, {
 				headers: headers,
 				allowRedirects: false,
 				agent: keepaliveAgent,
-				body: body
+				body: body,
+				timeout: options.timeout || 0,
+				binary: options.binary || false
 			}, $);
 		}
 	], callback);
 };
 
 ['get', 'put', 'post', 'delete', 'head'].forEach(function(method){
-  exports[method] = exports.method.bind(exports, method);
+	exports[method] = exports.method.bind(exports, method);
 });
 
 exports.ntlm = ntlm; //if you want to use the NTML functions yourself

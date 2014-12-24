@@ -31,6 +31,18 @@ httpntlm.get({
 
 Should support __http__ and __https__ now. Though, I've not tested it on http.
 
+## Options
+
+- `url:`      _{String}_   URL to connect. (Required)
+- `username:` _{String}_   Username. (Required)
+- `password:` _{String}_   Password. (Required)
+- `workstation:` _{String}_ Name of workstation or `''`.
+- `domain:`   _{String}_   Name of domain or `''`.
+- `body:`     _{String}_   Custom body.
+- `headers:`  _{Object}_   Custom headers.
+- `binary:`   _{Boolean}_  If `true` returns a Buffer instead of a String (Default: `false`).
+- `timeout:`  _{Number}_   Connection timeout in milliseconds (Default: `0` == waits till doomsday).
+
 ## Advanced
 
 If you want to use the NTLM-functions yourself, you can access the ntlm-library like this (https example):
@@ -86,6 +98,7 @@ async.waterfall([
     console.log(res.body);
 });
 ```
+
 ## More information
 
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
