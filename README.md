@@ -38,10 +38,8 @@ Should support __http__ and __https__ now. Though, I've not tested it on http.
 - `password:` _{String}_   Password. (Required)
 - `workstation:` _{String}_ Name of workstation or `''`.
 - `domain:`   _{String}_   Name of domain or `''`.
-- `body:`     _{String}_   Custom body.
-- `headers:`  _{Object}_   Custom headers.
-- `binary:`   _{Boolean}_  If `true` returns a Buffer instead of a String (Default: `false`).
-- `timeout:`  _{Number}_   Connection timeout in milliseconds (Default: `0` == waits till doomsday).
+
+You can also pass along all other options of [httpreq](https://github.com/SamDecrock/node-httpreq), including custom headers, cookies, body data, ... and use POST, PUT or DELETE instead of GET.
 
 ## Advanced
 
