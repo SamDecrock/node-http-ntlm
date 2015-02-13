@@ -29,7 +29,7 @@ httpntlm.get({
 });
 ```
 
-Should support __http__ and __https__ now. Though, I've not tested it on http.
+It supports __http__ and __https__.
 
 ## Options
 
