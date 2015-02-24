@@ -1,11 +1,11 @@
 {
   "name": "httpntlm",
   "description": "httpntlm is a Node.js library to do HTTP NTLM authentication",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "dependencies": {
-    "agentkeepalive": "*",
+    "agentkeepalive": ">=1.2.0",
     "async": "~0.2.9",
-    "httpreq": "~0.4.2",
+    "httpreq": ">=0.4.5",
     "underscore": "~1.7.0"
   },
   "author": {
@@ -16,7 +16,7 @@
     "url": "https://github.com/SamDecrock/node-http-ntlm/issues"
   },
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">=0.11.0"
   },
   "repository": {
     "type": "git",
