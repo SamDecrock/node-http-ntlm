@@ -5,6 +5,8 @@ var url = require('url');
 var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
 var _ = require('underscore');
+var http = require('http');
+var https = require('https');
 
 exports.method = function(method, options, callback){
 	if(!options.workstation) options.workstation = '';
@@ -22,11 +24,9 @@ exports.method = function(method, options, callback){
 	var keepaliveAgent;
 
 	if(isHttps){
-		var HttpsAgent = require('agentkeepalive').HttpsAgent;
-		keepaliveAgent = new HttpsAgent();
+		keepaliveAgent = new https.Agent({keepAlive: true});
 	}else{
-		var Agent = require('agentkeepalive');
-		keepaliveAgent = new Agent();
+		keepaliveAgent = new http.Agent({keepAlive: true});
 	}
 
 	async.waterfall([
