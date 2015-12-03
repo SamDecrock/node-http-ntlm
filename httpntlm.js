@@ -6,6 +6,13 @@ var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
 var _ = require('underscore');
 
+function extendWithValidOptions(typeOptions, httpreqOptions) {
+	return _.extend(typeOptions, _.pick(httpreqOptions, [
+		'timeout',
+		'rejectUnauthorized'
+	]));
+}
+
 exports.method = function(method, options, callback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
@@ -43,8 +50,8 @@ exports.method = function(method, options, callback){
 				agent: keepaliveAgent
 			};
 
-			// add timeout option:
-			if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
+			// add valid options to the HTTP request
+			type1options = extendWithValidOptions(type1options, httpreqOptions);
 
 			// send type1 message to server:
 			httpreq.get(options.url, type1options, $);
@@ -85,4 +92,3 @@ exports.method = function(method, options, callback){
 });
 
 exports.ntlm = ntlm; //if you want to use the NTML functions yourself
-
