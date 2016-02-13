@@ -43,9 +43,9 @@ exports.method = function(method, options, callback){
 				agent: keepaliveAgent
 			};
 
-			// pass along other options:
-			type1options.headers = _.extend(type1options.headers, httpreqOptions.headers);
-			type1options = _.extend(type1options, _.omit(httpreqOptions, 'headers'));
+			// pass along timeout and ca:
+			if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
+			if(httpreqOptions.ca) type1options.ca = httpreqOptions.ca;
 
 			// send type1 message to server:
 			httpreq.get(options.url, type1options, $);
