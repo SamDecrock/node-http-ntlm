@@ -43,8 +43,9 @@ exports.method = function(method, options, callback){
 				agent: keepaliveAgent
 			};
 
-			// add timeout option:
+			// pass along timeout and ca:
 			if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
+			if(httpreqOptions.ca) type1options.ca = httpreqOptions.ca;
 
 			// send type1 message to server:
 			httpreq.get(options.url, type1options, $);
