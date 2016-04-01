@@ -97,6 +97,25 @@ async.waterfall([
 });
 ```
 
+## Download binary files
+
+```javascript
+httpntlm.get({
+    url: "https://someurl.com/file.xls",
+    username: 'm$',
+    password: 'stinks',
+    workstation: 'choose.something',
+    domain: '',
+    binary: true
+}, function (err, response) {
+    if(err) return console.log(err);
+    fs.writeFile("file.xls", response.body, function (err) {
+        if(err) return console.log("error writing file");
+        console.log("file.xls saved!");
+    });
+});
+```
+
 ## More information
 
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
