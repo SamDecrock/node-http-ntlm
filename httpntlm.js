@@ -81,7 +81,7 @@ exports.method = function(method, options, callback){
 	], callback);
 };
 
-['get', 'put', 'post', 'delete'].forEach(function(method){
+['get', 'put', 'post', 'delete', 'options'].forEach(function(method){
 	exports[method] = exports.method.bind(exports, method);
 });
 
