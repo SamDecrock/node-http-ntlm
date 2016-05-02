@@ -7,7 +7,7 @@ var _ = require('underscore');
 var http = require('http');
 var https = require('https');
 
-exports.method = function(method, options, callback){
+exports.method = function(method, options, finalCallback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
 
@@ -39,7 +39,8 @@ exports.method = function(method, options, callback){
 				'Authorization': type1msg
 			},
 			timeout: options.timeout || 0,
-			agent: keepaliveAgent
+			agent: keepaliveAgent,
+			allowRedirects: false // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
 		};
 
 		// pass along timeout and ca:
@@ -51,6 +52,13 @@ exports.method = function(method, options, callback){
 	}
 
 	function sendType3Message (res, callback) {
+		// catch redirect here:
+		if(res.headers.location) {
+			options.url = res.headers.location;
+			return exports[method](options, finalCallback);
+		}
+
+
 		if(!res.headers['www-authenticate'])
 			return callback(new Error('www-authenticate not found on response of second request'));
 
@@ -80,9 +88,9 @@ exports.method = function(method, options, callback){
 
 
 	sendType1Message(function (err, res) {
-		if(err) return callback(err);
+		if(err) return finalCallback(err);
 		setImmediate(function () { // doesn't work without setImmediate()
-			sendType3Message(res, callback);
+			sendType3Message(res, finalCallback);
 		});
 	});
 
