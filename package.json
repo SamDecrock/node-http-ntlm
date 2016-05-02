@@ -15,7 +15,7 @@
     "url": "https://github.com/SamDecrock/node-http-ntlm/issues"
   },
   "engines": {
-    "node": ">=0.11.0"
+    "node": ">=0.8.0"
   },
   "repository": {
     "type": "git",
