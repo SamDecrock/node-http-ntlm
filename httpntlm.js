@@ -52,7 +52,7 @@ exports.method = function(method, options, callback){
 
 	function sendType3Message (res, callback) {
 		if(!res.headers['www-authenticate'])
-			return $(new Error('www-authenticate not found on response of second request'));
+			return callback(new Error('www-authenticate not found on response of second request'));
 
 		// parse type2 message from server:
 		var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
