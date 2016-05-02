@@ -1,6 +1,5 @@
 'use strict';
 
-var async = require('async');
 var url = require('url');
 var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
@@ -29,56 +28,64 @@ exports.method = function(method, options, callback){
 		keepaliveAgent = new http.Agent({keepAlive: true});
 	}
 
-	async.waterfall([
-		function ($){
-			var type1msg = ntlm.createType1Message(options);
+	// build type1 request:
 
-			// build type1 request:
-			var type1options = {
-				headers:{
-					'Connection' : 'keep-alive',
-					'Authorization': type1msg
-				},
-				timeout: options.timeout || 0,
-				agent: keepaliveAgent
-			};
+	function sendType1Message (callback) {
+		var type1msg = ntlm.createType1Message(options);
 
-			// pass along timeout and ca:
-			if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
-			if(httpreqOptions.ca) type1options.ca = httpreqOptions.ca;
+		var type1options = {
+			headers:{
+				'Connection' : 'keep-alive',
+				'Authorization': type1msg
+			},
+			timeout: options.timeout || 0,
+			agent: keepaliveAgent
+		};
 
-			// send type1 message to server:
-			httpreq.get(options.url, type1options, $);
-		},
+		// pass along timeout and ca:
+		if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
+		if(httpreqOptions.ca) type1options.ca = httpreqOptions.ca;
 
-		function (res, $){
-			if(!res.headers['www-authenticate'])
-				return $(new Error('www-authenticate not found on response of second request'));
+		// send type1 message to server:
+		httpreq.get(options.url, type1options, callback);
+	}
 
-			// parse type2 message from server:
-			var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
+	function sendType3Message (res, callback) {
+		if(!res.headers['www-authenticate'])
+			return $(new Error('www-authenticate not found on response of second request'));
 
-			// create type3 message:
-			var type3msg = ntlm.createType3Message(type2msg, options);
+		// parse type2 message from server:
+		var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
 
-			// build type3 request:
-			var type3options = {
-				headers: {
-					'Connection': 'Close',
-					'Authorization': type3msg
-				},
-				allowRedirects: false,
-				agent: keepaliveAgent
-			};
+		// create type3 message:
+		var type3msg = ntlm.createType3Message(type2msg, options);
 
-			// pass along other options:
-			type3options.headers = _.extend(type3options.headers, httpreqOptions.headers);
-			type3options = _.extend(type3options, _.omit(httpreqOptions, 'headers'));
+		// build type3 request:
+		var type3options = {
+			headers: {
+				'Connection': 'Close',
+				'Authorization': type3msg
+			},
+			allowRedirects: false,
+			agent: keepaliveAgent
+		};
 
-			// send type3 message to server:
-			httpreq[method](options.url, type3options, $);
-		}
-	], callback);
+		// pass along other options:
+		type3options.headers = _.extend(type3options.headers, httpreqOptions.headers);
+		type3options = _.extend(type3options, _.omit(httpreqOptions, 'headers'));
+
+		// send type3 message to server:
+		httpreq[method](options.url, type3options, callback);
+	}
+
+
+	sendType1Message(function (err, res) {
+		if(err) return callback(err);
+		setImmediate(function () { // doesn't work without setImmediate()
+			sendType3Message(res, callback);
+		});
+	});
+
 };
 
 ['get', 'put', 'patch', 'post', 'delete', 'options'].forEach(function(method){
