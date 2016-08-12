@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
- 
+
 'use strict';
 
 var url = require('url');
@@ -20,7 +20,7 @@ exports.method = function(method, options, finalCallback){
 	if(!options.domain) options.domain = '';
 
 	// extract non-ntlm-options:
-	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain');
+	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain', 'agentOptions');
 
 	// is https?
 	var isHttps = false;
@@ -29,11 +29,12 @@ exports.method = function(method, options, finalCallback){
 
 	// set keepaliveAgent (http or https):
 	var keepaliveAgent;
+	var agentOptions = Object.assign({keepAlive: true}, options.agentOptions || {});
 
 	if(isHttps){
-		keepaliveAgent = new https.Agent({keepAlive: true});
+		keepaliveAgent = new https.Agent(agentOptions);
 	}else{
-		keepaliveAgent = new http.Agent({keepAlive: true});
+		keepaliveAgent = new http.Agent(agentOptions);
 	}
 
 	// build type1 request:
@@ -109,4 +110,3 @@ exports.method = function(method, options, finalCallback){
 });
 
 exports.ntlm = ntlm; //if you want to use the NTML functions yourself
-
