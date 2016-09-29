@@ -72,6 +72,7 @@ exports.method = function(method, options, finalCallback){
 
 		// parse type2 message from server:
 		var type2msg = ntlm.parseType2Message(res.headers['www-authenticate'], callback);
+		if (!type2msg) return;
 
 		// create type3 message:
 		var type3msg = ntlm.createType3Message(type2msg, options);
