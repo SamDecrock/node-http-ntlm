@@ -145,6 +145,8 @@ function createType3Message(msg2, options){
 	var nonce = msg2.serverChallenge;
 	var username = options.username;
 	var password = options.password;
+	var lm_password = options.lm_password;
+	var nt_password = options.nt_password;
 	var negotiateFlags = msg2.negotiateFlags;
 
 	var isUnicode = negotiateFlags & flags.NTLM_NegotiateUnicode;
@@ -170,11 +172,11 @@ function createType3Message(msg2, options){
 		encryptedRandomSessionKeyBytes = new Buffer(encryptedRandomSessionKey, 'ascii');
 	}
 
-	var lmChallengeResponse = calc_resp(create_LM_hashed_password_v1(password), nonce);
-	var ntChallengeResponse = calc_resp(create_NT_hashed_password_v1(password), nonce);
+	var lmChallengeResponse = calc_resp((lm_password!=null)?lm_password:create_LM_hashed_password_v1(password), nonce);
+	var ntChallengeResponse = calc_resp((nt_password!=null)?nt_password:create_NT_hashed_password_v1(password), nonce);
 
 	if(isNegotiateExtendedSecurity){
-		var pwhash = create_NT_hashed_password_v1(password);
+		var pwhash = (nt_password!=null)?nt_password:create_NT_hashed_password_v1(password);
 	 	var clientChallenge = "";
 	 	for(var i=0; i < 8; i++){
 	 		clientChallenge += String.fromCharCode( Math.floor(Math.random()*256) );
@@ -392,6 +394,8 @@ function ntlm2sr_calc_resp(responseKeyNT, serverChallenge, clientChallenge){
 exports.createType1Message = createType1Message;
 exports.parseType2Message = parseType2Message;
 exports.createType3Message = createType3Message;
+exports.create_NT_hashed_password = create_NT_hashed_password_v1;
+exports.create_LM_hashed_password = create_LM_hashed_password_v1;
 
 
 
