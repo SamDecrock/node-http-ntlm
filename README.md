@@ -35,6 +35,7 @@ It supports __http__ and __https__.
 ```js
 
 var httpntlm = require('httpntlm');
+var ntlm = httpntlm.ntlm;
 var lm = ntlm.create_LM_hashed_password('Azx123456');
 var nt = ntlm.create_NT_hashed_password('Azx123456');
 console.log(lm);
