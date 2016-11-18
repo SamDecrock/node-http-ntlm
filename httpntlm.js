@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
- 
+
 'use strict';
 
 var url = require('url');
@@ -71,7 +71,8 @@ exports.method = function(method, options, finalCallback){
 			return callback(new Error('www-authenticate not found on response of second request'));
 
 		// parse type2 message from server:
-		var type2msg = ntlm.parseType2Message(res.headers['www-authenticate']);
+		var type2msg = ntlm.parseType2Message(res.headers['www-authenticate'], callback); //callback only happens on errors
+		if(!type2msg) return; // if callback returned an error, the parse-function returns with null
 
 		// create type3 message:
 		var type3msg = ntlm.createType3Message(type2msg, options);

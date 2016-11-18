@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
- 
+
 var crypto = require('crypto');
 
 var flags = {
@@ -110,8 +110,10 @@ function createType1Message(options){
 
 function parseType2Message(rawmsg, callback){
 	var match = rawmsg.match(/NTLM (.+)?/);
-	if(!match || !match[1])
-		return callback(new Error("Couldn't find NTLM in the message type2 comming from the server"));
+	if(!match || !match[1]) {
+		callback(new Error("Couldn't find NTLM in the message type2 comming from the server"));
+		return null;
+	}
 
 	var buf = new Buffer(match[1], 'base64');
 
@@ -120,8 +122,10 @@ function parseType2Message(rawmsg, callback){
 	msg.signature = buf.slice(0, 8);
 	msg.type = buf.readInt16LE(8);
 
-	if(msg.type != 2)
-		return callback(new Error("Server didn't return a type 2 message"));
+	if(msg.type != 2) {
+		callback(new Error("Server didn't return a type 2 message"));
+		return null;
+	}
 
 	msg.targetNameLen = buf.readInt16LE(12);
 	msg.targetNameMaxLen = buf.readInt16LE(14);
