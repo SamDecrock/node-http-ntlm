@@ -102,8 +102,10 @@ function createType1Message(options){
 	buf.writeUInt8(0 , pos); pos += 1; //VersionReserved3
 	buf.writeUInt8(15, pos); pos += 1; //NTLMRevisionCurrent
 
-	buf.write(workstation, pos, workstation.length, 'ascii'); pos += workstation.length; // workstation string
-	buf.write(domain     , pos, domain.length     , 'ascii'); pos += domain.length;
+
+	// length checks is to fix issue #46 and possibly #57
+	if(workstation.length !=0) buf.write(workstation, pos, workstation.length, 'ascii'); pos += workstation.length; // workstation string
+	if(domain.length !=0)      buf.write(domain     , pos, domain.length     , 'ascii'); pos += domain.length; // domain string
 
 	return 'NTLM ' + buf.toString('base64');
 }
