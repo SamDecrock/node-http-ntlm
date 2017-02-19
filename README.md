@@ -63,7 +63,7 @@ httpntlm.get({
     console.log(res.body);
 });
 
-/* you can save the array into your code and use it when you need it 
+/* you can save the array into your code and use it when you need it
 
 <Buffer b7 b4 13 5f a3 05 76 82 1e 92 9f fc 01 39 51 27>// before convert to array
 [ 183, 180, 19, 95, 163, 5, 118, 130, 30, 146, 159, 252, 1, 57, 81, 39 ]// convert to array
@@ -177,6 +177,12 @@ httpntlm.get({
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
 * [NTLM Authentication Scheme for HTTP](http://www.innovation.ch/personal/ronald/ntlm.html)
 * [LM hash on Wikipedia](http://en.wikipedia.org/wiki/LM_hash)
+
+## Donate
+
+If you like this module or you want me to update it faster, feel free to donate. It helps increasing my dedication to fixing bugs :-)
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LPYD83FGC7XPW)
 
 
 ## License (MIT)
