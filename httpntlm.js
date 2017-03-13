@@ -51,9 +51,8 @@ exports.method = function(method, options, finalCallback){
 			allowRedirects: false // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
 		};
 
-		// pass along timeout and ca:
-		if(httpreqOptions.timeout) type1options.timeout = httpreqOptions.timeout;
-		if(httpreqOptions.ca) type1options.ca = httpreqOptions.ca;
+		// pass along other options:
+		type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
 
 		// send type1 message to server:
 		httpreq.get(options.url, type1options, callback);
