@@ -18,6 +18,7 @@ var https = require('https');
 exports.method = function(method, options, finalCallback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
+	if(!options.secure) options.secure = 'true';
 
 	// extract non-ntlm-options:
 	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain');
@@ -40,7 +41,6 @@ exports.method = function(method, options, finalCallback){
 
 	function sendType1Message (callback) {
 		var type1msg = ntlm.createType1Message(options);
-
 		var type1options = {
 			headers:{
 				'Connection' : 'keep-alive',
@@ -48,6 +48,7 @@ exports.method = function(method, options, finalCallback){
 			},
 			timeout: options.timeout || 0,
 			agent: keepaliveAgent,
+			rejectUnauthorized: (options.secure === 'true'),
 			allowRedirects: false // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
 		};
 
@@ -59,12 +60,12 @@ exports.method = function(method, options, finalCallback){
 	}
 
 	function sendType3Message (res, callback) {
+
 		// catch redirect here:
 		if(res.headers.location) {
 			options.url = res.headers.location;
 			return exports[method](options, finalCallback);
 		}
-
 
 		if(!res.headers['www-authenticate'])
 			return callback(new Error('www-authenticate not found on response of second request'));
@@ -83,6 +84,7 @@ exports.method = function(method, options, finalCallback){
 				'Authorization': type3msg
 			},
 			allowRedirects: false,
+			rejectUnauthorized: (options.secure === 'true'),
 			agent: keepaliveAgent
 		};
 

@@ -19,8 +19,9 @@ httpntlm.get({
     url: "https://someurl.com",
     username: 'm$',
     password: 'stinks',
-    workstation: 'choose.something',
-    domain: ''
+    workstation: 'your.workstation.name', // optional
+    domain: 'your.windows.domain', // optional
+    secure: 'true' // optional
 }, function (err, res){
     if(err) return err;
 
@@ -84,8 +85,9 @@ httpntlm.get({
 - `password:` _{String}_   Password. (Required)
 - `workstation:` _{String}_ Name of workstation or `''`.
 - `domain:`   _{String}_   Name of domain or `''`.
+- `secure:` _{String}_   Set to false to allow targeting servers with an unrecognised certificate. True by default.
 
-if you already got the encrypted password,you should use this two param to replace the 'password' param.
+if you already got the encrypted password,you should use this two parameters to replace the 'password' parameter.
 
 - `lm_password` _{Buffer}_ encrypted lm password.(Required)
 - `nt_password` _{Buffer}_ encrypted nt password. (Required)
@@ -110,8 +112,8 @@ var options = {
     url: "https://someurl.com",
     username: 'm$',
     password: 'stinks',
-    workstation: 'choose.something',
-    domain: ''
+    workstation: 'your.workstation.name',
+    domain: 'your.windows.domain'
 };
 
 async.waterfall([
@@ -155,13 +157,16 @@ async.waterfall([
 
 ## Download binary files
 
+If you want to use this library to download an Excel file or an image, you have to set the binary flag to true, otherwise the resulting response will be corrupted.
+
 ```javascript
 httpntlm.get({
     url: "https://someurl.com/file.xls",
     username: 'm$',
     password: 'stinks',
-    workstation: 'choose.something',
-    domain: '',
+    workstation: 'your.workstation.name',
+    domain: 'your.windows.domain'
+    secure: 'true',
     binary: true
 }, function (err, response) {
     if(err) return console.log(err);
