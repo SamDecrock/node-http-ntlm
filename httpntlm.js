@@ -20,7 +20,7 @@ exports.method = function(method, options, finalCallback){
 	if(!options.domain) options.domain = '';
 
 	// extract non-ntlm-options:
-	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain');
+	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain', 'binary');
 
 	// is https?
 	var isHttps = false;
@@ -48,7 +48,8 @@ exports.method = function(method, options, finalCallback){
 			},
 			timeout: options.timeout || 0,
 			agent: keepaliveAgent,
-			allowRedirects: false // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
+			allowRedirects: false, // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
+			binary: options.binary || false
 		};
 
 		// pass along other options:
@@ -83,7 +84,8 @@ exports.method = function(method, options, finalCallback){
 				'Authorization': type3msg
 			},
 			allowRedirects: false,
-			agent: keepaliveAgent
+			agent: keepaliveAgent,
+			binary: options.binary || false
 		};
 
 		// pass along other options:
