@@ -55,7 +55,7 @@ exports.method = function(method, options, finalCallback){
 		type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
 
 		// send type1 message to server:
-		httpreq.get(options.url, type1options, callback);
+		httpreq[method](options.url, type1options, callback);
 	}
 
 	function sendType3Message (res, callback) {
