@@ -52,7 +52,15 @@ exports.method = function(method, options, finalCallback) {
     };
 
     // pass along other options:
-    type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
+    if(options.ntlm && options.ntlm.strict) {
+      // strict no need to pass other parameters
+      type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
+    }
+    else {
+      // not strict pass other parameters so as to continue if everything passes
+      type1options.headers = _.extend(type1options.headers, httpreqOptions.headers);
+      type1options = _.extend(type1options, _.omit(httpreqOptions, 'headers'));
+    }
 
     // send type1 message to server:
     httpreq[method](options.url, type1options, callback);
