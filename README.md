@@ -21,7 +21,7 @@ httpntlm.get({
     password: 'stinks',
     workstation: 'choose.something',
     domain: ''
-}, function (err, res){
+}, function(err, res) {
     if(err) return err;
 
     console.log(res.headers);
@@ -56,7 +56,7 @@ httpntlm.get({
     nt_password: nt,
     workstation: 'choose.something',
     domain: ''
-}, function (err, res){
+}, function(err, res) {
     if(err) return err;
 
     console.log(res.headers);
@@ -115,11 +115,11 @@ var options = {
 };
 
 async.waterfall([
-    function (callback){
+    function(callback) {
         var type1msg = ntlm.createType1Message(options);
 
         httpreq.get(options.url, {
-            headers:{
+            headers: {
                 'Connection' : 'keep-alive',
                 'Authorization': type1msg
             },
@@ -127,7 +127,7 @@ async.waterfall([
         }, callback);
     },
 
-    function (res, callback){
+    function(res, callback) {
         if(!res.headers['www-authenticate'])
             return callback(new Error('www-authenticate not found on response of second request'));
 
@@ -136,7 +136,7 @@ async.waterfall([
 
         setImmediate(function() {
             httpreq.get(options.url, {
-                headers:{
+                headers: {
                     'Connection' : 'Close',
                     'Authorization': type3msg
                 },
@@ -145,7 +145,7 @@ async.waterfall([
             }, callback);
         });
     }
-], function (err, res) {
+], function(err, res) {
     if(err) return console.log(err);
 
     console.log(res.headers);
@@ -163,9 +163,9 @@ httpntlm.get({
     workstation: 'choose.something',
     domain: '',
     binary: true
-}, function (err, response) {
+}, function(err, response) {
     if(err) return console.log(err);
-    fs.writeFile("file.xls", response.body, function (err) {
+    fs.writeFile("file.xls", response.body, function(err) {
         if(err) return console.log("error writing file");
         console.log("file.xls saved!");
     });
