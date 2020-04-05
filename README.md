@@ -8,34 +8,57 @@ It's a port from the Python libary [python-ntml](https://code.google.com/p/pytho
 
 You can install __httpntlm__ using the Node Package Manager (npm):
 
-    npm install httpntlm
+    npm install httpntlm-maa
 
 ## How to use
 
 ```js
-var httpntlm = require('httpntlm');
+var httpntlm = require('httpntlm-maa');
 
-httpntlm.get({
-    url: "https://someurl.com",
+var ret = httpntlm.fetch('https://someurl.com', {
+    method: 'get',
     username: 'm$',
     password: 'stinks',
     workstation: 'choose.something',
     domain: '',
-    ntlm: { strict: true }
-}, function(err, res) {
-    if(err) return err;
+    ntlm: { strict: true },
+    [fetch: <a_fetch_library>,] // for promise based
+    [request: <a_request_library>]  // for stream based
+}[, callback]);
 
-    console.log(res.headers);
-    console.log(res.body);
+// case fetch is provided or node-fetch module is peer installed the return is promise:
+ret.then(function(response) {
+  console.log('Success');
+  return response;
+})
+.catch(function(error) {
+  console.error('an error have occured', error);
 });
+
+// case request is provided or request module peer installed the return is a stream in that case:
+ret.pipe(fs.createWriteStream('some-file.txt'))
+
+or
+
+httpntlm.fetch(options[, callback])
+httpntlm.request(url, options[, callback])
+httpntlm.request(options[, callback])
+httpntlm.method(method, options[, callback])
+httpntlm.method(method, url, options[, callback])
+httpntlm.get(url, options[, callback])
+httpntlm.get(options[, callback])
+httpntlm.post...
 ```
+
+NOTE: return is dependent on which module you use (fetch -> Promise, request -> Stream)
+NOTE: the httpntlm.fetch and httpntlm.request are just aliases so httpntlm.fetch will use request if request is provided in option same for request
 
 It supports __http__ and __https__.
 
 ## pre-encrypt the password
 ```js
 
-var httpntlm = require('httpntlm');
+var httpntlm = require('httpntlm-maa');
 var ntlm = httpntlm.ntlm;
 var lm = ntlm.create_LM_hashed_password('Azx123456');
 var nt = ntlm.create_NT_hashed_password('Azx123456');
@@ -58,11 +81,6 @@ httpntlm.get({
     workstation: 'choose.something',
     domain: '',
     ntlm: { strict: false }
-}, function(err, res) {
-    if(err) return err;
-
-    console.log(res.headers);
-    console.log(res.body);
 });
 
 /* you can save the array into your code and use it when you need it
@@ -87,13 +105,15 @@ httpntlm.get({
 - `workstation:` _{String}_ Name of workstation or `''`.
 - `domain:`   _{String}_   Name of domain or `''`.
 - `ntlm`: _{Object}_ [Optional] with boolean property strict
+- `fetch:`   _{Function}_   a fetch module like node-fetch.
+- `request:`   _{Function}_   a request module like request.
 
 if you already got the encrypted password,you should use this two param to replace the 'password' param.
 
 - `lm_password` _{Buffer}_ encrypted lm password.(Required)
 - `nt_password` _{Buffer}_ encrypted nt password. (Required)
 
-You can also pass along all other options of [httpreq](https://github.com/SamDecrock/node-httpreq), including custom headers, cookies, body data, ... and use POST, PUT or DELETE instead of GET.
+You can also pass along all other options of respective fetch or request modules, including custom headers, cookies, body data, ... and use POST, PUT or DELETE instead of GET.
 
 
 
@@ -103,9 +123,8 @@ You can also pass along all other options of [httpreq](https://github.com/SamDec
 If you want to use the NTLM-functions yourself, you can access the ntlm-library like this (https example):
 
 ```js
-var ntlm = require('httpntlm').ntlm;
+var ntlm = require('httpntlm-maa').ntlm;
 var async = require('async');
-var httpreq = require('httpreq');
 var HttpsAgent = require('agentkeepalive').HttpsAgent;
 var keepaliveAgent = new HttpsAgent();
 
@@ -121,7 +140,8 @@ async.waterfall([
     function(callback) {
         var type1msg = ntlm.createType1Message(options);
 
-        httpreq.get(options.url, {
+        fetch(options.url, {
+            method: 'get,
             headers: {
                 'Connection' : 'keep-alive',
                 'Authorization': type1msg
@@ -138,7 +158,8 @@ async.waterfall([
         var type3msg = ntlm.createType3Message(type2msg, options);
 
         setImmediate(function() {
-            httpreq.get(options.url, {
+            fetch(options.url, {
+                method: 'get',
                 headers: {
                     'Connection' : 'Close',
                     'Authorization': type3msg
@@ -158,22 +179,7 @@ async.waterfall([
 
 ## Download binary files
 
-```javascript
-httpntlm.get({
-    url: "https://someurl.com/file.xls",
-    username: 'm$',
-    password: 'stinks',
-    workstation: 'choose.something',
-    domain: '',
-    binary: true
-}, function(err, response) {
-    if(err) return console.log(err);
-    fs.writeFile("file.xls", response.body, function(err) {
-        if(err) return console.log("error writing file");
-        console.log("file.xls saved!");
-    });
-});
-```
+it depends on the fetch/request module you are using like for request module set encoding to null in the options and for fetch use the .buffer() on the response object
 
 ## More information
 
