@@ -36,7 +36,7 @@ ret.then(function(response) {
 });
 
 // case request is provided or request module peer installed the return is a stream in that case:
-ret.pipe(fs.createWriteStream('some-file.txt'))
+ret.pipe(fs.createWriteStream('some-file.txt'));  // YAY piping works again!!!
 
 or
 
@@ -51,7 +51,7 @@ httpntlm.post...
 ```
 
 NOTE: return is dependent on which module you use (fetch -> Promise, request -> Stream)
-NOTE: the httpntlm.fetch and httpntlm.request are just aliases so httpntlm.fetch will use request if request is provided in option same for request
+NOTE: the httpntlm.fetch and httpntlm.request are just aliases so httpntlm.fetch will use request if request is provided in option same for httpntlm.request
 
 It supports __http__ and __https__.
 
@@ -141,7 +141,7 @@ async.waterfall([
         var type1msg = ntlm.createType1Message(options);
 
         fetch(options.url, {
-            method: 'get,
+            method: 'get',
             headers: {
                 'Connection' : 'keep-alive',
                 'Authorization': type1msg
