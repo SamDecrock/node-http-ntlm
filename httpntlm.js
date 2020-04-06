@@ -155,7 +155,7 @@ function getAgent(options) {
   return (protocol === 'https:') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true });
 }
 function getHeader(headers, headerkey) {
-  if(prototypeOf(headers.get) === functionPrototype) {
+  if(headers.get && prototypeOf(headers.get) === functionPrototype) {
     return headers.get(headerkey);
   }
   return headers[headerkey];
@@ -263,9 +263,9 @@ function doCall(fetchOrRequest, options, hasCallback) {
  * @param {Function} [callback] 
  */
 function method(method, url, options, callback) {
-  if(prototypeOf(arguments[0]) === stringPrototype) {
-    if(prototypeOf(arguments[1]) === stringPrototype) {
-      if(prototypeOf(arguments[2]) === functionPrototype) {
+  if(arguments[0] && prototypeOf(arguments[0]) === stringPrototype) {
+    if(arguments[1] && prototypeOf(arguments[1]) === stringPrototype) {
+      if(arguments[2] && prototypeOf(arguments[2]) === functionPrototype) {
         options = {};
         callback = arguments[2];
       }
@@ -310,6 +310,7 @@ function method(method, url, options, callback) {
     return response;
   })
   .catch(function(err) {
+    console.log(err);
     if(isRequest) {
       var req = err.__parent__request__;
       delete err.__parent__request__;
