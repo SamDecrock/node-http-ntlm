@@ -15,7 +15,9 @@ var https = require('https');
 var Duplex = require('stream').Duplex;
 
 var gFetchOrRequest = getGlobalFetchOrRequest();
-var prototypeOf = Object.getPrototypeOf;
+var prototypeOf = (function(prototypeOf, o) {
+  return o == undefined ? undefined : prototypeOf(o);
+}).bind(null, Object.getPrototypeOf);
 var functionPrototype = prototypeOf(function() {});
 var stringPrototype = prototypeOf('');
 
@@ -155,7 +157,7 @@ function getAgent(options) {
   return (protocol === 'https:') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true });
 }
 function getHeader(headers, headerkey) {
-  if(headers.get && prototypeOf(headers.get) === functionPrototype) {
+  if(prototypeOf(headers.get) === functionPrototype) {
     return headers.get(headerkey);
   }
   return headers[headerkey];
@@ -263,9 +265,9 @@ function doCall(fetchOrRequest, options, hasCallback) {
  * @param {Function} [callback] 
  */
 function method(method, url, options, callback) {
-  if(arguments[0] && prototypeOf(arguments[0]) === stringPrototype) {
-    if(arguments[1] && prototypeOf(arguments[1]) === stringPrototype) {
-      if(arguments[2] && prototypeOf(arguments[2]) === functionPrototype) {
+  if(prototypeOf(arguments[0]) === stringPrototype) {
+    if(prototypeOf(arguments[1]) === stringPrototype) {
+      if(prototypeOf(arguments[2]) === functionPrototype) {
         options = {};
         callback = arguments[2];
       }
