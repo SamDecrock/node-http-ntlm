@@ -199,7 +199,7 @@ function doCall(fetchOrRequest, options, hasCallback) {
   function sendType3Message(type1Response) {
     return new Promise(function(resolve, reject) {
       // catch redirect here:
-      const redirectLocation = getHeader(type1Response.headers, 'location');
+      var redirectLocation = getHeader(type1Response.headers, 'location');
       if(redirectLocation) {
         return request(redirectLocation, options);
       }
