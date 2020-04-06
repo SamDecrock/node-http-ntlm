@@ -51,7 +51,7 @@ httpntlm.post...
 ```
 
 NOTE: return is dependent on which module you use (fetch -> Promise, request -> Stream)
-NOTE: the httpntlm.fetch and httpntlm.request are just aliases so httpntlm.fetch will use request if request is provided in option same for httpntlm.request
+NOTE: the httpntlm.fetch and httpntlm.request are just aliases so httpntlm.fetch will use request if request is provided in the options argument same goes for httpntlm.request id fetch is provided in options.
 
 It supports __http__ and __https__.
 

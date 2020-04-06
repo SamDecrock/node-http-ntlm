@@ -30,19 +30,20 @@ var gFetchOrRequest = getGlobalFetchOrRequest();
  * @property {string} [lm_password] - the lm_password optional only if password is provided.
  * @property {string} [nt_password] - the nt_password optional only if password is provided.
  * @property {string} [agent] - an http(s) agent to use SHOULD BE KEEPALIVE if none is provided i create a new one depending on protocol.
+ * @property {{strict:boolean}} [ntlm] - an object with a strict property to indicate if the ntlm should be required (if not the response from first request will be sent back).
  * @property {string} [fetch] - a fetch module to use if node-fetch is installed as peer no need to provide this.
  * @property {string} [request] - a request module to use if request is installed as peer no need to provide this (note fetch is of higher priority).
  */
 
 function omit(obj) {
-  var toOmit = {};
-  for(var i = 1; i < arguments.length; i++) {
+  var toOmit = {}, i;
+  for(i = 1; i < arguments.length; i++) {
     toOmit[arguments[i]] = true;
   }
   var ret = {};
-  for(var i in obj) {
+  for(i in obj) {
     if(!toOmit[i]) {
-      ret[i] = obj[i]
+      ret[i] = obj[i];
     }
   }
   return ret;
@@ -53,6 +54,7 @@ function getGlobalFetchOrRequest() {
   try {
     unified = require(process.env.HTTPNTLM_FETCH || 'node-fetch');
   }
+  // eslint-disable-next-line no-empty
   catch(err) { }
   if(!unified) {
     unified = global.fetch;
@@ -64,6 +66,7 @@ function getGlobalFetchOrRequest() {
   try {
     unified = require(process.env.HTTPNTLM_REQUEST || 'request');
   }
+  // eslint-disable-next-line no-empty
   catch(err) { }
   if(!unified) {
     unified = global.request;
@@ -136,7 +139,7 @@ function unifyRequest(_request) { // useful for my purpose only
       }
 
     });
-  }
+  };
 }
 function getFetchOrRequest(options) {
   return (options.fetch && unifyFetch(options.fetch)) || (options.request && unifyRequest(options.request)) || gFetchOrRequest;
@@ -146,7 +149,7 @@ function getAgent(options) {
     return options.agent;
   }
   var protocol = options.protocol || url.parse(options.url).protocol;
-  return (protocol === 'https:') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true })
+  return (protocol === 'https:') ? new https.Agent({ keepAlive: true }) : new http.Agent({ keepAlive: true });
 }
 function getHeader(headers, headerkey) {
   if(typeof(headers.get) === 'function') {
@@ -245,7 +248,7 @@ function doCall(fetchOrRequest, options, hasCallback) {
     })
     .then(function() {
       return sendType3Message(type1Response);
-    })
+    });
   });
 }
 
@@ -258,22 +261,23 @@ function doCall(fetchOrRequest, options, hasCallback) {
  */
 function method(method, url, options, callback) {
   if(typeof(arguments[0]) === 'string') {
-    method = arguments[0];
     if(typeof(arguments[1]) === 'string') {
-      url = arguments[1];
       if(typeof(arguments[2]) === 'function') {
         options = {};
         callback = arguments[2];
       }
-      else {
-        options = arguments[2];
-        callback = arguments[3];
-      }
     }
     else {
+      url = undefined;
       options = arguments[1];
       callback = arguments[2];
     }
+  }
+  else {
+    method = undefined;
+    url = undefined;
+    options = arguments[0];
+    callback = arguments[1];
   }
   var opts = omit(options, 'url', 'uri');
   opts.method = method || opts.method;
@@ -324,7 +328,7 @@ function method(method, url, options, callback) {
   if(isRequest) {
     var returnStream, req;
     var writes = [];
-    var returnStream = new Duplex({
+    returnStream = new Duplex({
       read: function() {
       },
       write: function() {
@@ -340,13 +344,14 @@ function method(method, url, options, callback) {
     
     ret.then(function(result) {
       req = result.request;
-      for(var i = 0; i < writes.length; i++) {
+      var i;
+      for(i; i < writes.length; i++) {
         req.write.apply(req, writes[i]);
       }
 
       var events = result.unbind();
       var isComplete;
-      for(var i = 0; i < events.length; i++) {
+      for(i = 0; i < events.length; i++) {
         if(events[i][0] === 'complete') {
           isComplete = true;
         }
@@ -373,7 +378,7 @@ function method(method, url, options, callback) {
           error: getEventHandler('error'),
           response: getEventHandler('response'),
         };
-        for(var i in eventHandlers) {
+        for(i in eventHandlers) {
           req.on(i, eventHandlers[i]);
         }
       }
@@ -386,7 +391,7 @@ function method(method, url, options, callback) {
     return returnStream;
   }
   return ret;
-};
+}
 exports.method = method;
 
 /**
@@ -396,7 +401,7 @@ exports.method = method;
  */
 function request(url, options, callback) {
   return method('', url, options, callback);
-};
+}
 exports.request = request;
 /**
  * @param {string} url 
@@ -405,7 +410,7 @@ exports.request = request;
  */
 function fetch(url, options, callback) {
   return method('', url, options, callback);
-};
+}
 exports.fetch = fetch;
 
 ['get', 'put', 'patch', 'post', 'delete', 'options'].forEach(function(method) {
