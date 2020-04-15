@@ -312,21 +312,28 @@ function method(method, url, options, callback) {
     return response;
   })
   .catch(function(err) {
-    console.log(err);
     if(isRequest) {
       var req = err.__parent__request__;
-      delete err.__parent__request__;
-      if(callback) {
-        req.__callback__promise__.then(function(args) {
-          callback.apply(null, args);
-        });
+      if(req) {
+        delete err.__parent__request__;
+        if(callback) {
+          req.__callback__promise__.then(function(args) {
+            callback.apply(null, args);
+          });
+        }
+        delete req.__callback__promise__;
+        var unbind = req.__unbind__;
+        delete req.__unbind__;
+        return { request: req, error: err, unbind };
       }
-      delete req.__callback__promise__;
-      var unbind = req.__unbind__;
-      delete req.__unbind__;
-      return { request: req, error: err, unbind };
+      else {
+        if(callback) {
+          callback(err);
+        }
+        return { error: err };
+      }
     }
-    else if(callback) {
+    if(callback) {
       callback(err);
     }
     return Promise.reject(err);
@@ -350,48 +357,59 @@ function method(method, url, options, callback) {
     
     ret.then(function(result) {
       req = result.request;
-      var i;
-      for(i; i < writes.length; i++) {
-        req.write.apply(req, writes[i]);
-      }
-
-      var events = result.unbind();
-      var isComplete;
-      for(i = 0; i < events.length; i++) {
-        if(events[i][0] === 'complete') {
-          isComplete = true;
+      if(req) {
+        var i;
+        for(i; i < writes.length; i++) {
+          req.write.apply(req, writes[i]);
         }
-        returnStream.emit.apply(returnStream, events[i]);
-      }
-      if(!isComplete) {
-        var getEventHandler = function(event) {
-          return function() {
-            returnStream.emit.apply(returnStream, [event].concat(Array.prototype.slice.call(arguments)));
-            if(event === 'complete') {
-              setTimeout(function() {
-                returnStream.destroy();
-              }, 1000);
-            }
+  
+        var events = result.unbind();
+        var isComplete;
+        for(i = 0; i < events.length; i++) {
+          if(events[i][0] === 'complete') {
+            isComplete = true;
+          }
+          returnStream.emit.apply(returnStream, events[i]);
+        }
+        if(!isComplete) {
+          var getEventHandler = function(event) {
+            return function() {
+              returnStream.emit.apply(returnStream, [event].concat(Array.prototype.slice.call(arguments)));
+              if(event === 'complete') {
+                setTimeout(function() {
+                  returnStream.destroy();
+                }, 100);
+              }
+            };
           };
-        };
-        var eventHandlers = {
-          end: getEventHandler('end'),
-          request: getEventHandler('request'),
-          data: getEventHandler('data'),
-          complete: getEventHandler('complete'),
-          pipe: getEventHandler('pipe'),
-          socket: getEventHandler('socket'),
-          error: getEventHandler('error'),
-          response: getEventHandler('response'),
-        };
-        for(i in eventHandlers) {
-          req.on(i, eventHandlers[i]);
+          var eventHandlers = {
+            end: getEventHandler('end'),
+            request: getEventHandler('request'),
+            data: getEventHandler('data'),
+            complete: getEventHandler('complete'),
+            pipe: getEventHandler('pipe'),
+            socket: getEventHandler('socket'),
+            error: getEventHandler('error'),
+            response: getEventHandler('response'),
+          };
+          for(i in eventHandlers) {
+            req.on(i, eventHandlers[i]);
+          }
+        }
+        else {
+          setTimeout(function() {
+            returnStream.destroy();
+          }, 100);
         }
       }
       else {
+        returnStream.emit('error', result.error);
+        setImmediate(() => {
+          returnStream.emit('complete', result.error);
+        });
         setTimeout(function() {
           returnStream.destroy();
-        }, 1000);
+        }, 100);
       }
     });
     return returnStream;
