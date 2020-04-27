@@ -8,6 +8,8 @@
 
 'use strict';
 
+exports.Promise = Promise;
+
 var url = require('url');
 var ntlm = require('./ntlm');
 var http = require('http');
@@ -88,11 +90,11 @@ function unifyFetch(_fetch) { // useful for my purpose only
 }
 function unifyRequest(_request) { // useful for my purpose only
   return function request(options, hasCb) {
-    return new Promise(function(resolve, reject) {
+    return new exports.Promise(function(resolve, reject) {
       var ret;
       if(hasCb) {
         var cbResolve;
-        var cbPromise = new Promise(function(res) {
+        var cbPromise = new exports.Promise(function(res) {
           cbResolve = res;
         });
         ret = _request(options, function() {
@@ -202,7 +204,7 @@ function doCall(fetchOrRequest, options, hasCallback) {
   }
 
   function sendType3Message(type1Response) {
-    return new Promise(function(resolve, reject) {
+    return new exports.Promise(function(resolve, reject) {
       // catch redirect here:
       var redirectLocation = getHeader(type1Response.headers, 'location');
       if(redirectLocation) {
@@ -248,7 +250,7 @@ function doCall(fetchOrRequest, options, hasCallback) {
 
   return sendType1Message()
   .then(function(type1Response) {
-    return new Promise(function(resolve) {
+    return new exports.Promise(function(resolve) {
       setImmediate(resolve);
     })
     .then(function() {
@@ -336,7 +338,7 @@ function method(method, url, options, callback) {
     if(callback) {
       callback(err);
     }
-    return Promise.reject(err);
+    return exports.Promise.reject(err);
   });
   if(isRequest) {
     var returnStream, req;
