@@ -15,6 +15,8 @@ You can install __httpntlm__ using the Node Package Manager (npm):
 ```js
 var httpntlm = require('httpntlm-maa');
 
+// httpntlm.Promise = require('bluebird'); // specify your favourite promise library to use
+
 var ret = httpntlm.fetch('https://someurl.com', {
     method: 'get',
     username: 'm$',
