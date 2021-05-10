@@ -4,6 +4,10 @@ __httpntlm__ is a Node.js library to do HTTP NTLM authentication
 
 It's a port from the Python libary [python-ntml](https://code.google.com/p/python-ntlm/)
 
+## Donate
+
+If you depend on this module, feel free [to buy me a pizza 🍕](https://www.buymeacoffee.com/samdecrock)
+
 ## Install
 
 You can install __httpntlm__ using the Node Package Manager (npm):
@@ -177,12 +181,6 @@ httpntlm.get({
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
 * [NTLM Authentication Scheme for HTTP](http://www.innovation.ch/personal/ronald/ntlm.html)
 * [LM hash on Wikipedia](http://en.wikipedia.org/wiki/LM_hash)
-
-## Donate
-
-If you like this module or you want me to update it faster, feel free to donate. It helps increasing my dedication to fixing bugs :-)
-
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LPYD83FGC7XPW)
 
 
 ## License (MIT)
