@@ -40,12 +40,12 @@ exports.method = function(method, options, finalCallback){
 
 	function sendType1Message (callback) {
 		var type1msg = ntlm.createType1Message(options);
-
+		var headers = {
+			'Connection' : 'keep-alive',
+			'Authorization': type1msg
+		};
 		var type1options = {
-			headers:{
-				'Connection' : 'keep-alive',
-				'Authorization': type1msg
-			},
+			headers: _.extend(headers, options.ntlmHeaders),
 			timeout: options.timeout || 0,
 			agent: keepaliveAgent,
 			allowRedirects: false // don't redirect in httpreq, because http could change to https which means we need to change the keepaliveAgent
@@ -76,12 +76,14 @@ exports.method = function(method, options, finalCallback){
 		// create type3 message:
 		var type3msg = ntlm.createType3Message(type2msg, options);
 
+		var headers = {
+			'Connection' : 'Close',
+			'Authorization': type3msg
+		};
+
 		// build type3 request:
 		var type3options = {
-			headers: {
-				'Connection': 'Close',
-				'Authorization': type3msg
-			},
+			headers: _.extend(headers, options.ntlmHeaders),
 			allowRedirects: false,
 			agent: keepaliveAgent
 		};
