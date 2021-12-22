@@ -2,7 +2,7 @@
 
 __httpntlm__ is a Node.js library to do HTTP NTLM authentication
 
-It's a port from the Python libary [python-ntml](https://code.google.com/p/python-ntlm/)
+It's a port from the Python libary [python-ntlm](https://code.google.com/p/python-ntlm/)
 
 ## Donate
 
