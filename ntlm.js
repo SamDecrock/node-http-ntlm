@@ -182,13 +182,24 @@ function createType3Message(msg2, options){
 	var ntChallengeResponse = calc_resp((nt_password!=null)?nt_password:create_NT_hashed_password_v1(password), nonce);
 
 	if(isNegotiateExtendedSecurity){
+		/*
+		 * NTLMv2 extended security is enabled. While this technically can mean NTLMv2 extended security with NTLMv1 protocol,
+		 * servers that support extended security likely also support NTLMv2, so use NTLMv2.
+		 * This is also how curl implements NTLMv2 "detection".
+		 * By using NTLMv2, this supports communication with servers that forbid the use of NTLMv1 (e.g. via windows policies)
+		 *
+		 * However, the target info is needed to construct the NTLMv2 response so if it can't be negotiated,
+		 * fall back to NTLMv1 with NTLMv2 extended security.
+		 */
 		var pwhash = (nt_password!=null)?nt_password:create_NT_hashed_password_v1(password);
-	 	var clientChallenge = "";
+		var clientChallenge = "";
 	 	for(var i=0; i < 8; i++){
 	 		clientChallenge += String.fromCharCode( Math.floor(Math.random()*256) );
 	   	}
 	   	var clientChallengeBytes = new Buffer(clientChallenge, 'ascii');
-	    var challenges = ntlm2sr_calc_resp(pwhash, nonce, clientChallengeBytes);
+		var challenges = msg2.targetInfo
+			? calc_ntlmv2_resp(pwhash, username, domainName, msg2.targetInfo, nonce, clientChallengeBytes)
+			: ntlm2sr_calc_resp(pwhash, nonce, clientChallengeBytes);
 	    lmChallengeResponse = challenges.lmChallengeResponse;
 	    ntChallengeResponse = challenges.ntChallengeResponse;
 	}
@@ -379,6 +390,12 @@ function calc_resp(password_hash, server_challenge){
    	return Buffer.concat(resArray);
 }
 
+function hmac_md5(key, data){
+	var hmac = crypto.createHmac('md5', key);
+	hmac.update(data);
+	return hmac.digest();
+}
+
 function ntlm2sr_calc_resp(responseKeyNT, serverChallenge, clientChallenge){
 	// padding with zeros to make the hash 16 bytes longer
     var lmChallengeResponse = new Buffer(clientChallenge.length + 16);
@@ -395,6 +412,44 @@ function ntlm2sr_calc_resp(responseKeyNT, serverChallenge, clientChallenge){
     	lmChallengeResponse: lmChallengeResponse,
     	ntChallengeResponse: ntChallengeResponse
     };
+}
+
+function calc_ntlmv2_resp(pwhash, username, domain, targetInfo, serverChallenge, clientChallenge){
+	var responseKeyNTLM = NTOWFv2(pwhash, username, domain);
+
+	var lmV2ChallengeResponse = Buffer.concat([
+		hmac_md5(responseKeyNTLM, Buffer.concat([serverChallenge, clientChallenge])),
+		clientChallenge
+	]);
+
+	// 11644473600000 = diff between 1970 and 1601
+	var now = Date.now();
+	var timestamp = ((BigInt(now) + 11644473600000n) * 10000n);
+	var timestampBuffer = Buffer.alloc(8);
+	timestampBuffer.writeBigUInt64LE(timestamp);
+
+	var zero32Bit = Buffer.alloc(4, 0)
+	var temp = Buffer.concat([
+		// Version
+		Buffer.from([0x01, 0x01, 0x00, 0x00]),
+		zero32Bit,
+		timestampBuffer,
+		clientChallenge,
+		zero32Bit,
+		targetInfo,
+		zero32Bit
+	]);
+	var proofString = hmac_md5(responseKeyNTLM, Buffer.concat([serverChallenge, temp]));
+	var ntV2ChallengeResponse = Buffer.concat([proofString, temp]);
+
+    return {
+    	lmChallengeResponse: lmV2ChallengeResponse,
+    	ntChallengeResponse: ntV2ChallengeResponse
+    };
+}
+
+function NTOWFv2(pwhash, user, domain){
+	return hmac_md5(pwhash, new Buffer(user.toUpperCase() + domain, 'utf16le'));
 }
 
 exports.createType1Message = createType1Message;

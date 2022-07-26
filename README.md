@@ -2,7 +2,7 @@
 
 __httpntlm__ is a Node.js library to do HTTP NTLM authentication
 
-It's a port from the Python libary [python-ntml](https://code.google.com/p/python-ntlm/)
+It's a port from the Python libary [python-ntml](https://code.google.com/p/python-ntlm/) with added NTLMv2 support.
 
 ## Donate
 
@@ -96,8 +96,12 @@ if you already got the encrypted password,you should use this two param to repla
 
 You can also pass along all other options of [httpreq](https://github.com/SamDecrock/node-httpreq), including custom headers, cookies, body data, ... and use POST, PUT or DELETE instead of GET.
 
+## NTLMv2
 
-
+When NTLMv2 extended security and target information can be negotiated with the server, this library assumes
+the server supports NTLMv2 and creates responses according to the NTLMv2 specification (the actually supported
+NTLM version cannot be negotiated).
+Otherwise, NTLMv1 or NTLMv1 with NTLMv2 extended security will be used.
 
 ## Advanced
 
