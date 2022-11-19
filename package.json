@@ -1,7 +1,7 @@
 {
   "name": "httpntlm",
   "description": "httpntlm is a Node.js library to do HTTP NTLM authentication",
-  "version": "1.7.7",
+  "version": "1.8.0",
   "dependencies": {
     "httpreq": ">=0.4.22",
     "underscore": "~1.12.1"
@@ -10,6 +10,12 @@
     "name": "Sam Decrock",
     "url": "https://github.com/SamDecrock/"
   },
+  "contributors": [
+    {
+      "name": "Martin Andreas Ullrich",
+      "url": "https://github.com/dasMulli"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/SamDecrock/node-http-ntlm/issues"
   },
@@ -29,5 +35,15 @@
   ],
   "scripts": {
     "jshint": "jshint *.js"
-  }
+  },
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LPYD83FGC7XPW"
+    },
+    {
+      "type": "buymeacoffee",
+      "url": "https://www.buymeacoffee.com/samdecrock"
+    }
+  ]
 }

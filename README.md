@@ -6,7 +6,11 @@ It's a port from the Python libary [python-ntml](https://code.google.com/p/pytho
 
 ## Donate
 
-If you depend on this module, feel free [to buy me a pizza 🍕](https://www.buymeacoffee.com/samdecrock)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
+
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LPYD83FGC7XPW)
+
 
 ## Install
 
