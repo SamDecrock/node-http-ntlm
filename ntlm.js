@@ -424,7 +424,7 @@ function calc_ntlmv2_resp(pwhash, username, domain, targetInfo, serverChallenge,
 
 	// 11644473600000 = diff between 1970 and 1601
 	var now = Date.now();
-	var timestamp = ((BigInt(now) + BigInt(11644473600000)) * BigInt(10000));
+	var timestamp = ((BigInt(now) + BigInt(11644473600000)) * BigInt(10000));  // we need BigInt to be able to write it to a buffer
 	var timestampBuffer = Buffer.alloc(8);
 	timestampBuffer.writeBigUInt64LE(timestamp);
 
