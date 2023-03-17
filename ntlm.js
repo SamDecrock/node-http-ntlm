@@ -6,7 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-var crypto = require('crypto');
+var js_md4_1 = require("js-md4");
+var des_js_1 = require("des.js");
+var crypto = require("crypto");
 
 var flags = {
 	NTLM_NegotiateUnicode                :  0x00000001,
@@ -256,6 +258,10 @@ function createType3Message(msg2, options){
 	return 'NTLM ' + buf.toString('base64');
 }
 
+function createDesEncrypt(key) {
+	return des_js_1.DES.create({ type: "encrypt", key: key });
+}
+
 function create_LM_hashed_password_v1(password){
 	// fix the password length to 14 bytes
 	password = password.toUpperCase();
@@ -273,8 +279,8 @@ function create_LM_hashed_password_v1(password){
 
 	function encrypt(buf){
 		var key = insertZerosEvery7Bits(buf);
-		var des = crypto.createCipheriv('DES-ECB', key, '');
-		return des.update("KGS!@#$%"); // page 57 in [MS-NLMP]);
+		var des = createDesEncrypt(key);
+		return Buffer.from(des.update("KGS!@#$%")); // page 57 in [MS-NLMP]);
 	}
 
 	var firstPartEncrypted = encrypt(firstPart);
@@ -365,9 +371,7 @@ function binaryArray2bytes(array){
 
 function create_NT_hashed_password_v1(password){
 	var buf = new Buffer(password, 'utf16le');
-	var md4 = crypto.createHash('md4');
-	md4.update(buf);
-	return new Buffer(md4.digest());
+	return Buffer.from(js_md4_1.create().update(buf).digest());
 }
 
 function calc_resp(password_hash, server_challenge){
@@ -378,14 +382,14 @@ function calc_resp(password_hash, server_challenge){
 
     var resArray = [];
 
-    var des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(0,7)), '');
-    resArray.push( des.update(server_challenge.slice(0,8)) );
+    var des = createDesEncrypt(insertZerosEvery7Bits(passHashPadded.slice(0,7)));
+    resArray.push(Buffer.from(des.update(server_challenge.slice(0,8))));
 
-    des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(7,14)), '');
-    resArray.push( des.update(server_challenge.slice(0,8)) );
+    des = createDesEncrypt(insertZerosEvery7Bits(passHashPadded.slice(7,14)));
+    resArray.push(Buffer.from(des.update(server_challenge.slice(0,8))));
 
-    des = crypto.createCipheriv('DES-ECB', insertZerosEvery7Bits(passHashPadded.slice(14,21)), '');
-    resArray.push( des.update(server_challenge.slice(0,8)) );
+    des = createDesEncrypt(insertZerosEvery7Bits(passHashPadded.slice(14,21)));
+    resArray.push(Buffer.from(des.update(server_challenge.slice(0,8))));
 
    	return Buffer.concat(resArray);
 }
