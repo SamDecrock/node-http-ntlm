@@ -45,5 +45,8 @@
       "type": "buymeacoffee",
       "url": "https://www.buymeacoffee.com/samdecrock"
     }
-  ]
+  ],
+  "devDependencies": {
+    "rewire": "^6.0.0"
+  }
 }
