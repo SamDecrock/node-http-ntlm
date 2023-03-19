@@ -6,10 +6,13 @@ It's a port from the Python libary [python-ntml](https://code.google.com/p/pytho
 
 ## Donate
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
+Help keep my open source project alive! Your donation, no matter how small, makes a real difference.
+
+Thank you for your support!
 
 
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=LPYD83FGC7XPW)
+[![](http://neat.be/paypal-donate-button.webp)](https://www.paypal.com/donate/?hosted_button_id=2CKNJLZJBW8ZC) [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
+
 
 
 ## Install
@@ -30,7 +33,7 @@ httpntlm.get({
     workstation: 'choose.something',
     domain: ''
 }, function (err, res){
-    if(err) return err;
+    if(err) return console.log(err);
 
     console.log(res.headers);
     console.log(res.body);
@@ -189,6 +192,16 @@ httpntlm.get({
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
 * [NTLM Authentication Scheme for HTTP](http://www.innovation.ch/personal/ronald/ntlm.html)
 * [LM hash on Wikipedia](http://en.wikipedia.org/wiki/LM_hash)
+
+## Contributing
+
+Running tests in an open source package is crucial for ensuring the quality and reliability of the codebase. When you submit code changes, it's essential to ensure that these changes don't break existing functionality or introduce new bugs.
+
+To run the tests, simply run
+
+    node test.js
+
+All tests should return `true`
 
 
 ## License (MIT)
