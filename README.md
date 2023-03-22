@@ -11,7 +11,7 @@ Help keep my open source project alive! Your donation, no matter how small, make
 Thank you for your support!
 
 
-[![](http://neat.be/paypal-donate-button.webp)](https://www.paypal.com/donate/?hosted_button_id=2CKNJLZJBW8ZC) [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
+[![](https://neat.be/paypal-donate-button.webp)](https://www.paypal.com/donate/?hosted_button_id=2CKNJLZJBW8ZC) [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
 
 
 
@@ -68,7 +68,7 @@ httpntlm.get({
     workstation: 'choose.something',
     domain: ''
 }, function (err, res){
-    if(err) return err;
+    if(err) return console.log(err);
 
     console.log(res.headers);
     console.log(res.body);
