@@ -81,6 +81,21 @@ function test_createType1Message_noworkstation() {
   return realResponse == expectedResponse;
 }
 
+function test_createType1Message_emptyoptions() {
+  console.log('> testing createType1Message (empty options)');
+  const createType1Message = ntlm.__get__("createType1Message");
+
+  var options = {};
+
+  var realResponse = createType1Message(options);
+  // console.log('type1 message (empty options):', realResponse);
+
+  var expectedResponse = "NTLM TlRMTVNTUAABAAAAB6IIogAAAAAoAAAAAAAAACgAAAAFASgKAAAADw==";
+  return realResponse == expectedResponse;
+}
+
+
+
 
 
 
@@ -222,6 +237,51 @@ function test_createType3Message_negotiateflagszero() {
   // console.log('type3 message:', realResponse);
 
   var expectedResponse = "NTLM TlRMTVNTUAADAAAAGAAYAFoAAAAYABgAcgAAAAAAAABIAAAAAgACAEgAAAAQABAASgAAAAAAAACKAAAABIKIogUBKAoAAAAPbSRDSE9PU0UuU09NRVRISU5HEBenAMbG/BJagLAbC+ssxjoV6DmoMZnLPnIxjabRKh2kis6avHJoHUvdnSQrhLYz";
+  return realResponse == expectedResponse;
+}
+
+
+function test_createType3Message_emptyoptions() {
+  console.log('> testing createType3Message');
+  const createType3Message = ntlm.__get__("createType3Message");
+
+  var mathMock = {
+    random: function () {
+      return 0.8092;
+    },
+    floor: Math.floor
+  };
+  ntlm.__set__("Math", mathMock);
+
+  var dateMock = {
+    now: function () {
+      return 1679346960095;
+    }
+  };
+  ntlm.__set__("Date", dateMock);
+
+  var type2Message = {
+    signature: Buffer.from([0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00]),
+    type: 2,
+    targetNameLen: 30,
+    targetNameMaxLen: 30,
+    targetNameOffset: 56,
+    targetName: Buffer.from([0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00]),
+    negotiateFlags: -1567981051,
+    serverChallenge: Buffer.from([0x05, 0xeb, 0xf2, 0xc2, 0xf2, 0x72, 0x92, 0x30]),
+    reserved: Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+    targetInfoLen: 152,
+    targetInfoMaxLen: 152,
+    targetInfoOffset: 86,
+    targetInfo: Buffer.from([0x02, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x01, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x04, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x03, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x07, 0x00, 0x08, 0x00, 0x39, 0xa0, 0xbb, 0x30, 0x87, 0x9f, 0xd5, 0x01, 0x00, 0x00, 0x00, 0x00])
+  };
+
+  var options = {};
+
+  var realResponse = createType3Message(type2Message, options);
+  // console.log('type3 message:', realResponse);
+
+  var expectedResponse = "NTLM TlRMTVNTUAADAAAAGAAYAEgAAADIAMgAYAAAAAAAAABIAAAAAAAAAEgAAAAAAAAASAAAAAAAAAAoAQAABYKIogUBKAoAAAAPwARIPPqPB18BtDy2SiF1us/Pz8/Pz8/P52yYCH+rc7F7jUeUnayiPQEBAAAAAAAA8OZaK3Fb2QHPz8/Pz8/PzwAAAAACAB4ARABFAFMASwBUAE8AUAAtAEoAUwA0AFUASgBUAEQAAQAeAEQARQBTAEsAVABPAFAALQBKAFMANABVAEoAVABEAAQAHgBEAEUAUwBLAFQATwBQAC0ASgBTADQAVQBKAFQARAADAB4ARABFAFMASwBUAE8AUAAtAEoAUwA0AFUASgBUAEQABwAIADmguzCHn9UBAAAAAAAAAAA=";
   return realResponse == expectedResponse;
 }
 
@@ -377,9 +437,11 @@ function test_NTOWFv2() {
 console.log(test_createType1Message());
 console.log(test_createType1Message_nodomain());
 console.log(test_createType1Message_noworkstation());
+console.log(test_createType1Message_emptyoptions());
 console.log(test_parseType2Message());
 console.log(test_createType3Message());
 console.log(test_createType3Message_negotiateflagszero());
+console.log(test_createType3Message_emptyoptions());
 console.log(test_create_LM_hashed_password_v1());
 console.log(test_create_LM_hashed_password_v1_longpassword());
 console.log(test_insertZerosEvery7Bits());

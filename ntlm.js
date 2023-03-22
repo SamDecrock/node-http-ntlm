@@ -69,6 +69,9 @@ var typeflags = {
 };
 
 function createType1Message(options){
+	if(!options.domain) options.domain = '';
+	if(!options.workstation) options.workstation = '';
+
 	var domain = escape(options.domain.toUpperCase());
 	var workstation = escape(options.workstation.toUpperCase());
 	var protocol = 'NTLMSSP\0';
@@ -150,6 +153,11 @@ function parseType2Message(rawmsg, callback){
 }
 
 function createType3Message(msg2, options){
+	if(!options.domain) options.domain = '';
+	if(!options.workstation) options.workstation = '';
+	if(!options.username) options.username = '';
+	if(!options.password) options.password = '';
+
 	var nonce = msg2.serverChallenge;
 	var username = options.username;
 	var password = options.password;

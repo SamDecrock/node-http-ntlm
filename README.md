@@ -190,7 +190,7 @@ httpntlm.get({
 ## More information
 
 * [python-ntlm](https://code.google.com/p/python-ntlm/)
-* [NTLM Authentication Scheme for HTTP](http://www.innovation.ch/personal/ronald/ntlm.html)
+* [NTLM Authentication Scheme for HTTP](https://web.archive.org/web/20200724074947/https://www.innovation.ch/personal/ronald/ntlm.html)
 * [LM hash on Wikipedia](http://en.wikipedia.org/wiki/LM_hash)
 
 ## Contributing
