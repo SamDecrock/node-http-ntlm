@@ -51,12 +51,12 @@ var lm = ntlm.create_LM_hashed_password('Azx123456');
 var nt = ntlm.create_NT_hashed_password('Azx123456');
 console.log(lm);
 console.log(Array.prototype.slice.call(lm, 0));
-lm = new Buffer([ 183, 180, 19, 95, 163, 5, 118, 130, 30, 146, 159, 252, 1, 57, 81, 39 ]);
+lm = Buffer.from([ 183, 180, 19, 95, 163, 5, 118, 130, 30, 146, 159, 252, 1, 57, 81, 39 ]);
 console.log(lm);
 
 console.log(nt);
 console.log(Array.prototype.slice.call(nt, 0));
-nt = new Buffer([150, 27, 7, 219, 220, 207, 134, 159, 42, 60, 153, 28, 131, 148, 14, 1]);
+nt = Buffer.from([150, 27, 7, 219, 220, 207, 134, 159, 42, 60, 153, 28, 131, 148, 14, 1]);
 console.log(nt);
 
 
