@@ -115,7 +115,7 @@ function createType1Message(options){
 function parseType2Message(rawmsg, callback){
 	var match = rawmsg.match(/NTLM (.+)?/);
 	if(!match || !match[1]) {
-		callback(new Error("Couldn't find NTLM in the message type2 comming from the server"));
+		callback(new Error("Couldn't find NTLM in the message type2 coming from the server"));
 		return null;
 	}
 
