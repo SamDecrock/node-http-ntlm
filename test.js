@@ -221,7 +221,7 @@ function test_createType3Message_negotiateflagszero() {
   var realResponse = createType3Message(type2Message, options);
   // console.log('type3 message:', realResponse);
 
-  var expectedResponse = "NTLM TlRMTVNTUAADAAAAGAAYAFoAAAAYABgAcgAAAAAAAABIAAAAAgACAEgAAAAQABAASgAAAAAAAACKAAAABYKIogUBKAoAAAAPbSRDSE9PU0UuU09NRVRISU5HEBenAMbG/BJagLAbC+ssxjoV6DmoMZnLPnIxjabRKh2kis6avHJoHUvdnSQrhLYz";
+  var expectedResponse = "NTLM TlRMTVNTUAADAAAAGAAYAFoAAAAYABgAcgAAAAAAAABIAAAAAgACAEgAAAAQABAASgAAAAAAAACKAAAABIKIogUBKAoAAAAPbSRDSE9PU0UuU09NRVRISU5HEBenAMbG/BJagLAbC+ssxjoV6DmoMZnLPnIxjabRKh2kis6avHJoHUvdnSQrhLYz";
   return realResponse == expectedResponse;
 }
 

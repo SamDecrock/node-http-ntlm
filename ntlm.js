@@ -238,7 +238,11 @@ function createType3Message(msg2, options){
 	buf.writeUInt16LE(encryptedRandomSessionKeyBytes.length, pos); pos += 2; // EncryptedRandomSessionKeyMaxLen
 	buf.writeUInt32LE(BODY_LENGTH + domainNameBytes.length + usernameBytes.length + workstationBytes.length + lmChallengeResponse.length + ntChallengeResponse.length, pos); pos += 4; // EncryptedRandomSessionKeyOffset
 
-	buf.writeUInt32LE(typeflags.NTLM_TYPE2_FLAGS, pos); pos += 4; // NegotiateFlags
+	// Fix #98
+	var flagsToWrite = isUnicode
+	    ? typeflags.NTLM_TYPE2_FLAGS
+	    : typeflags.NTLM_TYPE2_FLAGS - flags.NTLM_NegotiateUnicode;
+	buf.writeUInt32LE(flagsToWrite , pos); pos += 4; // NegotiateFlags
 
 	buf.writeUInt8(5, pos); pos++; // ProductMajorVersion
 	buf.writeUInt8(1, pos); pos++; // ProductMinorVersion
