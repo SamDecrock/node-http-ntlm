@@ -91,10 +91,11 @@ httpntlm.get({
 ## Options
 
 - `url:`      _{String}_   URL to connect. (Required)
-- `username:` _{String}_   Username. (Required)
-- `password:` _{String}_   Password. (Required)
-- `workstation:` _{String}_ Name of workstation or `''`.
-- `domain:`   _{String}_   Name of domain or `''`.
+- `username:` _{String}_   Username (optional, default: '')
+- `password:` _{String}_   Password (optional, default: '')
+- `workstation:` _{String}_ Name of workstation (optional, default: '')
+- `domain:`   _{String}_   Name of domain (optional, default: '')
+- `agent:`   _{Agent}_   In case you want to reuse the keepaliveAgent over different calls (optional)
 
 if you already got the encrypted password,you should use this two param to replace the 'password' param.
 
@@ -197,11 +198,19 @@ httpntlm.get({
 
 Running tests in an open source package is crucial for ensuring the quality and reliability of the codebase. When you submit code changes, it's essential to ensure that these changes don't break existing functionality or introduce new bugs.
 
-To run the tests, simply run
+To run the unit tests, simply run
 
-    node test.js
+    node ./tests/unittests.js
 
 All tests should return `true`
+
+To run the integration tests, first start the NTLM server with
+
+    node ./tests/integrationtests-server.js
+
+Next, run the integration tests with:
+
+    node ./tests/integrationtests.js
 
 
 ## License (MIT)

@@ -30,10 +30,14 @@ exports.method = function(method, options, finalCallback){
 	// set keepaliveAgent (http or https):
 	var keepaliveAgent;
 
-	if(isHttps){
-		keepaliveAgent = new https.Agent({keepAlive: true});
+	if(options.agent) {
+		keepaliveAgent = options.agent;
 	}else{
-		keepaliveAgent = new http.Agent({keepAlive: true});
+		if(isHttps){
+			keepaliveAgent = new https.Agent({keepAlive: true});
+		}else{
+			keepaliveAgent = new http.Agent({keepAlive: true});
+		}
 	}
 
 	// build type1 request:

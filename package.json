@@ -1,7 +1,7 @@
 {
   "name": "httpntlm",
   "description": "httpntlm is a Node.js library to do HTTP NTLM authentication",
-  "version": "1.8.8",
+  "version": "1.8.9",
   "dependencies": {
     "des.js": "^1.0.1",
     "httpreq": ">=0.4.22",
@@ -50,6 +50,8 @@
   ],
   "devDependencies": {
     "deep-equal": "^2.2.0",
+    "express": "^4.18.2",
+    "express-ntlm": "^2.6.2",
     "rewire": "^6.0.0"
   }
 }

@@ -1,6 +1,6 @@
 var rewire = require("rewire");
 var equal = require('deep-equal');
-var ntlm = rewire("./ntlm.js");
+var ntlm = rewire("../ntlm.js");
 
 function test_create_LM_hashed_password_v1() {
   console.log('> testing create_LM_hashed_password_v1');
@@ -242,7 +242,7 @@ function test_createType3Message_negotiateflagszero() {
 
 
 function test_createType3Message_emptyoptions() {
-  console.log('> testing createType3Message');
+  console.log('> testing createType3Message (empty options)');
   const createType3Message = ntlm.__get__("createType3Message");
 
   var mathMock = {
