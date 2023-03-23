@@ -57,6 +57,7 @@ exports.method = function(method, options, finalCallback){
 
 		// pass along other options:
 		type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
+		if(httpreqOptions.headers) type1options.headers = _.extend(type1options.headers, _.omit(httpreqOptions.headers, 'Connection', 'Authorization'));
 
 		// send type1 message to server:
 		httpreq[method](options.url, type1options, callback);
@@ -91,8 +92,8 @@ exports.method = function(method, options, finalCallback){
 		};
 
 		// pass along other options:
-		type3options.headers = _.extend(type3options.headers, httpreqOptions.headers);
 		type3options = _.extend(type3options, _.omit(httpreqOptions, 'headers'));
+		if(httpreqOptions.headers) type3options.headers = _.extend(type3options.headers, _.omit(httpreqOptions.headers, 'Connection', 'Authorization'));
 
 		// send type3 message to server:
 		httpreq[method](options.url, type3options, callback);

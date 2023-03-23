@@ -16,7 +16,10 @@ app.use(ntlm({
 }));
 
 app.all('*', function(request, response) {
-  console.log('> incoming NTLM request', request.ntlm);
+  console.log('> incoming NTLM request');
+  console.log('> headers:', request.headers);
+  console.log('> ntlm data:', request.ntlm);
+
   response.end(JSON.stringify(request.ntlm)); // {"DomainName":"MYDOMAIN","UserName":"MYUSER","Workstation":"MYWORKSTATION"}
 });
 

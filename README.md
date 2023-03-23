@@ -96,6 +96,7 @@ httpntlm.get({
 - `workstation:` _{String}_ Name of workstation (optional, default: '')
 - `domain:`   _{String}_   Name of domain (optional, default: '')
 - `agent:`   _{Agent}_   In case you want to reuse the keepaliveAgent over different calls (optional)
+- `headers:`   _{Object}_   Add in custom headers. The following headers are used by NTLM and cannot be passed: `Connection`, `Authorization` (optional)
 
 if you already got the encrypted password,you should use this two param to replace the 'password' param.
 
@@ -187,6 +188,26 @@ httpntlm.get({
     });
 });
 ```
+
+## Pass in custom headers
+
+```js
+httpntlm.get({
+  url: "http://localhost:3000",
+  username: 'm$',
+  password: 'stinks',
+  workstation: 'choose.something',
+  domain: 'somedomain',
+  headers: {
+    'User-Agent': 'my-useragent'
+  }
+}, function (err, res){
+  if(err) return console.log(err);
+
+  console.log(res.headers);
+  console.log(res.body);
+});
+````
 
 ## More information
 

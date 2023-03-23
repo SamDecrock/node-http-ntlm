@@ -44,5 +44,27 @@ function test_reuseKeepaliveAgent() {
   });
 }
 
+function test_customHeaders() {
+  httpntlm.get({
+    url: "http://localhost:3000",
+    username: 'm$',
+    password: 'stinks',
+    workstation: 'choose.something',
+    domain: 'somedomain',
+    headers: {
+      'User-Agent': 'my-useragent',
+      'Authorization': 'will-be-omitted-by-the-module'
+    }
+  }, function (err, res){
+    if(err) return console.log(err);
+
+    console.log(res.headers);
+    console.log(res.body);
+  });
+}
+
+
 test_simpleAuthorization();
 test_reuseKeepaliveAgent();
+test_customHeaders();
+
