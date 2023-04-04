@@ -10,15 +10,20 @@ It's a port from the Python libary [python-ntml](https://code.google.com/p/pytho
 
 ## Donate
 
-Help keep my open source project alive! Your donation, no matter how small, makes a real difference.
-
 If you've benefited from this module in any way, please consider donating!
 
+__Donations:__
+
+| Name       | amount   | when      |
+|------------|----------|-----------|
+| Tina Lacey | $ 20     | June 2018 |
+
+Last update: March 2023
+
+
+[![](https://neat.be/paypal-donate-button.png)](https://www.paypal.com/donate/?hosted_button_id=2CKNJLZJBW8ZC)
+
 Thank you for your support!
-
-
-[![](https://neat.be/paypal-donate-button.png)](https://www.paypal.com/donate/?hosted_button_id=2CKNJLZJBW8ZC) [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samdecrock)
-
 
 
 ## Install
