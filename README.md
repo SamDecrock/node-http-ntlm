@@ -4,9 +4,15 @@ __httpntlm__ is a Node.js library to do HTTP NTLM authentication
 
 It's a port from the Python libary [python-ntml](https://code.google.com/p/python-ntlm/) with added NTLMv2 support.
 
+## Snyk security scan
+
+[![Known Vulnerabilities](https://snyk.io/test/github/SamDecrock/node-http-ntlm/badge.svg)](https://snyk.io/test/github/SamDecrock/node-http-ntlm)
+
 ## Donate
 
 Help keep my open source project alive! Your donation, no matter how small, makes a real difference.
+
+If you've benefited from this module in any way, please consider donating!
 
 Thank you for your support!
 
@@ -40,53 +46,6 @@ httpntlm.get({
 });
 ```
 
-It supports __http__ and __https__.
-
-## pre-encrypt the password
-```js
-var httpntlm = require('httpntlm');
-var ntlm = httpntlm.ntlm;
-var lm = ntlm.create_LM_hashed_password('Azx123456');
-var nt = ntlm.create_NT_hashed_password('Azx123456');
-console.log(lm);
-console.log(Array.prototype.slice.call(lm, 0));
-lm = Buffer.from([ 183, 180, 19, 95, 163, 5, 118, 130, 30, 146, 159, 252, 1, 57, 81, 39 ]);
-console.log(lm);
-
-console.log(nt);
-console.log(Array.prototype.slice.call(nt, 0));
-nt = Buffer.from([150, 27, 7, 219, 220, 207, 134, 159, 42, 60, 153, 28, 131, 148, 14, 1]);
-console.log(nt);
-
-
-httpntlm.get({
-  url: "https://someurl.com",
-  username: 'm$',
-  lm_password: lm,
-  nt_password: nt,
-  workstation: 'choose.something',
-  domain: ''
-}, function (err, res){
-  if(err) return console.log(err);
-
-  console.log(res.headers);
-  console.log(res.body);
-});
-
-/* you can save the array into your code and use it when you need it
-
-<Buffer b7 b4 13 5f a3 05 76 82 1e 92 9f fc 01 39 51 27>// before convert to array
-[ 183, 180, 19, 95, 163, 5, 118, 130, 30, 146, 159, 252, 1, 57, 81, 39 ]// convert to array
-<Buffer b7 b4 13 5f a3 05 76 82 1e 92 9f fc 01 39 51 27>//convert back to buffer
-
-<Buffer 96 1b 07 db dc cf 86 9f 2a 3c 99 1c 83 94 0e 01>
-[ 150, 27, 7, 219, 220, 207, 134, 159, 42, 60, 153, 28, 131, 148, 14, 1 ]
-<Buffer 96 1b 07 db dc cf 86 9f 2a 3c 99 1c 83 94 0e 01>
-*/
-
-```
-
-
 ## Options
 
 - `url:`      _{String}_   URL to connect. (Required)
@@ -113,6 +72,30 @@ Otherwise, NTLMv1 or NTLMv1 with NTLMv2 extended security will be used.
 
 ## Advanced
 
+### pre-encrypt the password
+```js
+var httpntlm = require('httpntlm');
+var ntlm = httpntlm.ntlm;
+var lm = ntlm.create_LM_hashed_password('Azx123456');
+var nt = ntlm.create_NT_hashed_password('Azx123456');
+
+
+httpntlm.get({
+  url: "https://someurl.com",
+  username: 'm$',
+  lm_password: lm,
+  nt_password: nt,
+  workstation: 'choose.something',
+  domain: ''
+}, function (err, res){
+  if(err) return console.log(err);
+
+  console.log(res.headers);
+  console.log(res.body);
+});
+```
+
+### Use the NTLM-functions yourself
 If you want to use the NTLM-functions yourself, you can access the ntlm-library like this (https example):
 
 ```js
@@ -169,7 +152,7 @@ async.waterfall([
 });
 ```
 
-## Download binary files
+### Download binary files
 
 ```js
 httpntlm.get({
@@ -188,7 +171,7 @@ httpntlm.get({
 });
 ```
 
-## Pass in custom headers
+### Pass in custom headers
 
 ```js
 httpntlm.get({
@@ -206,7 +189,11 @@ httpntlm.get({
   console.log(res.headers);
   console.log(res.body);
 });
-````
+```
+
+### More examples
+
+You can find more examples on [Snyk](https://snyk.io/advisor/npm-package/httpntlm/example).
 
 ## More information
 
@@ -214,23 +201,17 @@ httpntlm.get({
 * [NTLM Authentication Scheme for HTTP](https://web.archive.org/web/20200724074947/https://www.innovation.ch/personal/ronald/ntlm.html)
 * [LM hash on Wikipedia](http://en.wikipedia.org/wiki/LM_hash)
 
-## Contributing
+## Tests
 
 Running tests in an open source package is crucial for ensuring the quality and reliability of the codebase. When you submit code changes, it's essential to ensure that these changes don't break existing functionality or introduce new bugs.
 
-To run the unit tests, simply run
+Tests are written with Mocha.
 
-    node ./tests/unittests.js
+To run tests, simply run:
 
-All tests should return `true`
+    npm test
 
-To run the integration tests, first start the NTLM server with
-
-    node ./tests/integrationtests-server.js
-
-Next, run the integration tests with:
-
-    node ./tests/integrationtests.js
+Note that the integration tests start up a simple express.js server with NTLM support. You might see some extra debugging info from that server when running integration tests.
 
 
 ## License (MIT)
