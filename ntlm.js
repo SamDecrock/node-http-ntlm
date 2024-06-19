@@ -112,13 +112,18 @@ function createType1Message(options){
 	if(workstation.length !=0) buf.write(workstation, pos, workstation.length, 'ascii'); pos += workstation.length; // workstation string
 	if(domain.length !=0)      buf.write(domain     , pos, domain.length     , 'ascii'); pos += domain.length; // domain string
 
-	return 'NTLM ' + buf.toString('base64');
+	return `${options?.auth_scheme ?? "NTLM"} ` + buf.toString("base64");
 }
 
-function parseType2Message(rawmsg, callback){
-	var match = rawmsg.match(/NTLM (.+)?/);
+function parseType2Message(rawmsg, callback, options){
+	var authScheme = options?.auth_scheme ?? "NTLM";
+	var match = rawmsg.match(new RegExp(`${authScheme} (.+)?`));
 	if(!match || !match[1]) {
-		callback(new Error("Couldn't find NTLM in the message type2 coming from the server"));
+		callback(
+      new Error(
+        `Couldn't find ${authScheme} in the message type2 coming from the server`
+      )
+    );
 		return null;
 	}
 
@@ -267,7 +272,7 @@ function createType3Message(msg2, options){
 	ntChallengeResponse.copy(buf, pos); pos += ntChallengeResponse.length;
 	encryptedRandomSessionKeyBytes.copy(buf, pos); pos += encryptedRandomSessionKeyBytes.length;
 
-	return 'NTLM ' + buf.toString('base64');
+	return `${options?.auth_scheme ?? "NTLM"} ` + buf.toString("base64");
 }
 
 function create_LM_hashed_password_v1(password){
