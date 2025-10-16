@@ -66,7 +66,8 @@ exports.method = function(method, options, finalCallback){
 	function sendType3Message (res, callback) {
 		// catch redirect here:
 		if(res.headers.location) {
-			options.url = res.headers.location;
+			const resolved = new URL(res.headers.location, options.url);
+			options.url = resolved.href;
 			return exports[method](options, finalCallback);
 		}
 
