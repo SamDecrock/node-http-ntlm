@@ -6,7 +6,7 @@
     "des.js": "^1.0.1",
     "httpreq": ">=0.4.22",
     "js-md4": "^0.3.2",
-    "underscore": "~1.12.1"
+    "underscore": "^1.13.8"
   },
   "author": {
     "name": "Sam Decrock",
