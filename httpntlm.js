@@ -11,16 +11,24 @@
 var url = require('url');
 var httpreq = require('httpreq');
 var ntlm = require('./ntlm');
-var _ = require('underscore');
 var http = require('http');
 var https = require('https');
+
+// returns a shallow copy of obj without the given keys
+function omit(obj, keys){
+	var result = {};
+	Object.keys(obj).forEach(function(key){
+		if(keys.indexOf(key) === -1) result[key] = obj[key];
+	});
+	return result;
+}
 
 exports.method = function(method, options, finalCallback){
 	if(!options.workstation) options.workstation = '';
 	if(!options.domain) options.domain = '';
 
 	// extract non-ntlm-options:
-	var httpreqOptions = _.omit(options, 'url', 'username', 'password', 'workstation', 'domain');
+	var httpreqOptions = omit(options, ['url', 'username', 'password', 'workstation', 'domain']);
 
 	// is https?
 	var isHttps = false;
@@ -56,7 +64,7 @@ exports.method = function(method, options, finalCallback){
 		};
 
 		// pass along other options:
-		type1options = _.extend({}, _.omit(httpreqOptions, 'headers', 'body'), type1options);
+		type1options = Object.assign({}, omit(httpreqOptions, ['headers', 'body']), type1options);
 		// do not pass headers here, only in the last call, the headers can be consumed serverside
 
 		// send type1 message to server:
@@ -92,10 +100,10 @@ exports.method = function(method, options, finalCallback){
 		};
 
 		// pass along other options:
-		type3options = _.extend(type3options, _.omit(httpreqOptions, 'headers'));
+		type3options = Object.assign(type3options, omit(httpreqOptions, ['headers']));
 
 		// pass all headers except Authorization & Connection as the NTLM protocol uses this:
-		if(httpreqOptions.headers) type3options.headers = _.extend(type3options.headers, _.omit(httpreqOptions.headers, 'Connection', 'Authorization'));
+		if(httpreqOptions.headers) type3options.headers = Object.assign(type3options.headers, omit(httpreqOptions.headers, ['Connection', 'Authorization']));
 
 		// send type3 message to server:
 		httpreq[method](options.url, type3options, callback);
