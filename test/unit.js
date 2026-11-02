@@ -408,4 +408,94 @@ describe('Unit tests', () => {
     var expectedResponse = Buffer.from([0x26, 0xd9, 0xf6, 0xea, 0x4d, 0x31, 0xd7, 0xf5, 0x12, 0xfb, 0x5f, 0xb4, 0x50, 0xd0, 0x9d, 0xf4]);
     assert.deepEqual(realResponse, expectedResponse);
   });
+
+  it('parseType2Message (no NTLM in header)', () => {
+    const parseType2Message = ntlm.__get__("parseType2Message");
+
+    var callbackError = null;
+    var realResponse = parseType2Message('Basic realm="foo"', function (err) {
+      callbackError = err;
+    });
+
+    assert.equal(realResponse, null);
+    assert.ok(callbackError instanceof Error);
+    assert.equal(callbackError.message, "Couldn't find NTLM in the message type2 coming from the server");
+  });
+
+  it('parseType2Message (not a type 2 message)', () => {
+    const parseType2Message = ntlm.__get__("parseType2Message");
+
+    // this is a type 1 message, not a type 2 message
+    var type1Message = "NTLM TlRMTVNTUAABAAAAB7IIogoACgA4AAAAEAAQACgAAAAFASgKAAAAD0NIT09TRS5TT01FVEhJTkdTT01FRE9NQUlO";
+
+    var callbackError = null;
+    var realResponse = parseType2Message(type1Message, function (err) {
+      callbackError = err;
+    });
+
+    assert.equal(realResponse, null);
+    assert.ok(callbackError instanceof Error);
+    assert.equal(callbackError.message, "Server didn't return a type 2 message");
+  });
+
+  it('createType3Message (pre-hashed lm_password and nt_password)', () => {
+    const createType3Message = ntlm.__get__("createType3Message");
+    const create_LM_hashed_password_v1 = ntlm.__get__("create_LM_hashed_password_v1");
+    const create_NT_hashed_password_v1 = ntlm.__get__("create_NT_hashed_password_v1");
+
+    var mathMock = {
+      random: function () {
+        return 0.8092;
+      },
+      floor: Math.floor
+    };
+    ntlm.__set__("Math", mathMock);
+
+    var dateMock = {
+      now: function () {
+        return 1679346960095;
+      }
+    };
+    ntlm.__set__("Date", dateMock);
+
+    var type2Message = {
+      signature: Buffer.from([0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00]),
+      type: 2,
+      targetNameLen: 30,
+      targetNameMaxLen: 30,
+      targetNameOffset: 56,
+      targetName: Buffer.from([0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00]),
+      negotiateFlags: -1567981051,
+      serverChallenge: Buffer.from([0x05, 0xeb, 0xf2, 0xc2, 0xf2, 0x72, 0x92, 0x30]),
+      reserved: Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+      targetInfoLen: 152,
+      targetInfoMaxLen: 152,
+      targetInfoOffset: 86,
+      targetInfo: Buffer.from([0x02, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x01, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x04, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x03, 0x00, 0x1e, 0x00, 0x44, 0x00, 0x45, 0x00, 0x53, 0x00, 0x4b, 0x00, 0x54, 0x00, 0x4f, 0x00, 0x50, 0x00, 0x2d, 0x00, 0x4a, 0x00, 0x53, 0x00, 0x34, 0x00, 0x55, 0x00, 0x4a, 0x00, 0x54, 0x00, 0x44, 0x00, 0x07, 0x00, 0x08, 0x00, 0x39, 0xa0, 0xbb, 0x30, 0x87, 0x9f, 0xd5, 0x01, 0x00, 0x00, 0x00, 0x00])
+    };
+
+    // same credentials as the plain 'createType3Message' test, but pre-hashed and without a plaintext password:
+    var options = {
+      url: "https://someurl.com",
+      username: 'm$',
+      lm_password: create_LM_hashed_password_v1('stinks'),
+      nt_password: create_NT_hashed_password_v1('stinks'),
+      workstation: 'choose.something',
+      domain: ''
+    };
+
+    var realResponse = createType3Message(type2Message, options);
+
+    // must be identical to the message created from the plaintext password 'stinks':
+    var expectedResponse = "NTLM TlRMTVNTUAADAAAAGAAYAGwAAADIAMgAhAAAAAAAAABIAAAABAAEAEgAAAAgACAATAAAAAAAAABMAQAABYKIogUBKAoAAAAPbQAkAEMASABPAE8AUwBFAC4AUwBPAE0ARQBUAEgASQBOAEcA34OQvQRxhMrl/ZdqHfdXsc/Pz8/Pz8/PBRktHt+/zDBHvSp4tqmfpwEBAAAAAAAA8OZaK3Fb2QHPz8/Pz8/PzwAAAAACAB4ARABFAFMASwBUAE8AUAAtAEoAUwA0AFUASgBUAEQAAQAeAEQARQBTAEsAVABPAFAALQBKAFMANABVAEoAVABEAAQAHgBEAEUAUwBLAFQATwBQAC0ASgBTADQAVQBKAFQARAADAB4ARABFAFMASwBUAE8AUAAtAEoAUwA0AFUASgBUAEQABwAIADmguzCHn9UBAAAAAAAAAAA=";
+    assert.equal(realResponse, expectedResponse);
+  });
+
+  it('exported hash functions', () => {
+    var realNT = ntlm.create_NT_hashed_password('Azx123456');
+    var realLM = ntlm.create_LM_hashed_password('Azx123456');
+
+    assert.deepEqual(realNT, Buffer.from([0x96, 0x1b, 0x07, 0xdb, 0xdc, 0xcf, 0x86, 0x9f, 0x2a, 0x3c, 0x99, 0x1c, 0x83, 0x94, 0x0e, 0x01]));
+    assert.deepEqual(realLM, Buffer.from([0xb7, 0xb4, 0x13, 0x5f, 0xa3, 0x05, 0x76, 0x82, 0x1e, 0x92, 0x9f, 0xfc, 0x01, 0x39, 0x51, 0x27]));
+  });
 });
