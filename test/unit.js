@@ -1,6 +1,7 @@
 var rewire = require("rewire");
 var ntlm = rewire("../ntlm.js");
 var assert = require('assert');
+var crypto = require('crypto');
 
 
 describe('Unit tests', () => {
@@ -132,13 +133,12 @@ describe('Unit tests', () => {
   it('createType3Message', () => {
     const createType3Message = ntlm.__get__("createType3Message");
 
-    var mathMock = {
-      random: function () {
-        return 0.8092;
-      },
-      floor: Math.floor
-    };
-    ntlm.__set__("Math", mathMock);
+    // fixed client challenge of 8 x 0xcf
+    ntlm.__set__("crypto", Object.assign({}, crypto, {
+      randomBytes: function () {
+        return Buffer.alloc(8, 0xcf);
+      }
+    }));
 
     var dateMock = {
       now: function () {
@@ -181,13 +181,12 @@ describe('Unit tests', () => {
   it('createType3Message (negotiateFlags zero)', () => {
     const createType3Message = ntlm.__get__("createType3Message");
 
-    var mathMock = {
-      random: function () {
-        return 0.8092;
-      },
-      floor: Math.floor
-    };
-    ntlm.__set__("Math", mathMock);
+    // fixed client challenge of 8 x 0xcf
+    ntlm.__set__("crypto", Object.assign({}, crypto, {
+      randomBytes: function () {
+        return Buffer.alloc(8, 0xcf);
+      }
+    }));
 
     var dateMock = {
       now: function () {
@@ -230,13 +229,12 @@ describe('Unit tests', () => {
   it('createType3Message (empty options)', () => {
     const createType3Message = ntlm.__get__("createType3Message");
 
-    var mathMock = {
-      random: function () {
-        return 0.8092;
-      },
-      floor: Math.floor
-    };
-    ntlm.__set__("Math", mathMock);
+    // fixed client challenge of 8 x 0xcf
+    ntlm.__set__("crypto", Object.assign({}, crypto, {
+      randomBytes: function () {
+        return Buffer.alloc(8, 0xcf);
+      }
+    }));
 
     var dateMock = {
       now: function () {
@@ -443,13 +441,12 @@ describe('Unit tests', () => {
     const create_LM_hashed_password_v1 = ntlm.__get__("create_LM_hashed_password_v1");
     const create_NT_hashed_password_v1 = ntlm.__get__("create_NT_hashed_password_v1");
 
-    var mathMock = {
-      random: function () {
-        return 0.8092;
-      },
-      floor: Math.floor
-    };
-    ntlm.__set__("Math", mathMock);
+    // fixed client challenge of 8 x 0xcf
+    ntlm.__set__("crypto", Object.assign({}, crypto, {
+      randomBytes: function () {
+        return Buffer.alloc(8, 0xcf);
+      }
+    }));
 
     var dateMock = {
       now: function () {
