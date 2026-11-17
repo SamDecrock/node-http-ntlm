@@ -28,6 +28,10 @@
     "url": "git://github.com/SamDecrock/node-http-ntlm.git"
   },
   "main": "./httpntlm",
+  "files": [
+    "httpntlm.js",
+    "ntlm.js"
+  ],
   "licenses": [
     {
       "type": "MIT",
