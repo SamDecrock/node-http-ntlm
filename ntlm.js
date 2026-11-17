@@ -202,11 +202,7 @@ function createType3Message(msg2, options){
 		 * fall back to NTLMv1 with NTLMv2 extended security.
 		 */
 		var pwhash = (nt_password!=null)?nt_password:create_NT_hashed_password_v1(password);
-		var clientChallenge = "";
-	 	for(var i=0; i < 8; i++){
-	 		clientChallenge += String.fromCharCode( Math.floor(Math.random()*256) );
-	   	}
-	   	var clientChallengeBytes = Buffer.from(clientChallenge, 'ascii');
+	   	var clientChallengeBytes = crypto.randomBytes(8);
 		var challenges = msg2.targetInfo
 			? calc_ntlmv2_resp(pwhash, username, domainName, msg2.targetInfo, nonce, clientChallengeBytes)
 			: ntlm2sr_calc_resp(pwhash, nonce, clientChallengeBytes);
