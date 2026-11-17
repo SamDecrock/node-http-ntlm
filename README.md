@@ -68,6 +68,23 @@ if you already got the encrypted password,you should use this two param to repla
 
 You can also pass along all other options of [httpreq](https://github.com/SamDecrock/node-httpreq), including custom headers, cookies, body data, ... and use POST, PUT or DELETE instead of GET.
 
+### Concurrent requests
+
+NTLM authenticates the TCP connection, not the individual request. The three steps of the handshake have to travel over the same connection, which is why __httpntlm__ uses a keep-alive agent internally. If you fire several requests at the same time with a shared `agent`, the handshakes can get mixed up and you will see `401` responses or data from the wrong request.
+
+To do concurrent requests, either:
+
+- don't pass an `agent` at all: every call then gets its own connection, or
+- pass a dedicated `agent` per concurrent request, or
+- authenticate once and reuse the session cookies that the server hands out, if the server supports that.
+
+```js
+// safe: no shared agent, every call authenticates over its own connection
+urls.forEach(function (url) {
+  httpntlm.get({ url: url, username: 'm$', password: 'stinks' }, callback);
+});
+```
+
 ## NTLMv2
 
 When NTLMv2 extended security and target information can be negotiated with the server, this library assumes
