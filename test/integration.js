@@ -13,6 +13,14 @@ var PLAIN_PORT = 3002; // a server without NTLM, used for redirect / error tests
 
 var httpServer, httpsServer, plainServer;
 
+// a captured type 2 message, same as in unit.js
+var TYPE2_BASE64 =
+  'TlRMTVNTUAACAAAAHgAeADgAAAAFgoqiBevywvJykjAAAAAAAAAAAJgAmABWAAAA' +
+  'CgC6RwAAAA9EAEUAUwBLAFQATwBQAC0ASgBTADQAVQBKAFQARAACAB4ARABFAFMA' +
+  'SwBUAE8AUAAtAEoAUwA0AFUASgBUAEQAAQAeAEQARQBTAEsAVABPAFAALQBKAFMA' +
+  'NABVAEoAVABEAAQAHgBEAEUAUwBLAFQATwBQAC0ASgBTADQAVQBKAFQARAADAB4A' +
+  'RABFAFMASwBUAE8AUAAtAEoAUwA0AFUASgBUAEQABwAIADmguzCHn9UBAAAAAA==';
+
 var credentials = {
   username: 'm$',
   password: 'stinks',
@@ -72,12 +80,29 @@ describe('Integration tests', () => {
 
     // Plain server without NTLM:
     //   /redirect -> redirects to the NTLM protected http server
+    //   /negotiate -> NTLM handshake using the 'Negotiate' scheme
     //   /badntlm  -> answers 401 with an invalid NTLM challenge
     //   /noauth   -> answers 200 without any www-authenticate header
     plainServer = http.createServer(function (request, response) {
       if (request.url === '/redirect') {
         response.writeHead(302, { 'Location': 'http://localhost:' + HTTP_PORT + '/redirected' });
         return response.end();
+      }
+      if (request.url === '/negotiate') {
+        // minimal server that only speaks 'Negotiate' but accepts NTLM messages (PR #110)
+        var auth = request.headers['authorization'] || '';
+        var m = auth.match(/^Negotiate (.+)$/);
+        if (!m) {
+          response.writeHead(401, { 'WWW-Authenticate': 'Negotiate' });
+          return response.end();
+        }
+        var msgType = Buffer.from(m[1], 'base64').readUInt32LE(8);
+        if (msgType === 1) {
+          response.writeHead(401, { 'WWW-Authenticate': 'Negotiate ' + TYPE2_BASE64 });
+          return response.end();
+        }
+        response.writeHead(200);
+        return response.end(JSON.stringify({ messageType: msgType, authorization: auth }));
       }
       if (request.url === '/badntlm') {
         // answers with a type 1 message instead of a type 2 message
@@ -217,6 +242,30 @@ describe('Integration tests', () => {
       var data = JSON.parse(res.body);
       assert.equal(data.ntlm.Authenticated, true);
       assert.equal(data.url, '/redirected-relative');
+      done();
+    });
+  });
+
+  it('auth_scheme Negotiate', (done) => {
+    httpntlm.get(withCredentials({
+      url: "http://localhost:" + PLAIN_PORT + "/negotiate",
+      auth_scheme: 'Negotiate'
+    }), function (err, res){
+      if(err) return done(err);
+
+      var data = JSON.parse(res.body);
+      assert.equal(data.messageType, 3);
+      assert.ok(/^Negotiate /.test(data.authorization));
+      done();
+    });
+  });
+
+  it('error when server only speaks Negotiate and auth_scheme is not set', (done) => {
+    httpntlm.get(withCredentials({
+      url: "http://localhost:" + PLAIN_PORT + "/negotiate"
+    }), function (err, res){
+      assert.ok(err instanceof Error);
+      assert.equal(err.message, "Couldn't find NTLM in the message type2 coming from the server");
       done();
     });
   });

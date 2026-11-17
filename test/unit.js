@@ -346,13 +346,12 @@ describe('Unit tests', () => {
   it("createType3Message (configured auth_schema)", () => {
     const createType3Message = ntlm.__get__("createType3Message");
 
-    var mathMock = {
-      random: function () {
-        return 0.8092;
-      },
-      floor: Math.floor,
-    };
-    ntlm.__set__("Math", mathMock);
+    // fixed client challenge of 8 x 0xcf
+    ntlm.__set__("crypto", Object.assign({}, crypto, {
+      randomBytes: function () {
+        return Buffer.alloc(8, 0xcf);
+      }
+    }));
 
     var dateMock = {
       now: function () {

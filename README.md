@@ -58,9 +58,8 @@ httpntlm.get({
 - `password:` _{String}_   Password (optional, default: '')
 - `workstation:` _{String}_ Name of workstation (optional, default: '')
 - `domain:`   _{String}_   Name of domain (optional, default: '')
-- `auth_scheme:` _{String}_ [Authentication Scheme](https://learn.microsoft.com/en-us/dotnet/framework/wcf/feature-details/understanding-http-authentication#http-authentication-schemes) to use (optional, default: 'NTLM')
+- `auth_scheme:` _{String}_ [Authentication scheme](https://learn.microsoft.com/en-us/dotnet/framework/wcf/feature-details/understanding-http-authentication#http-authentication-schemes) used in the `Authorization` and `WWW-Authenticate` headers, for servers that only advertise `Negotiate` but accept NTLM (optional, default: 'NTLM')
 - `agent:`   _{Agent}_   In case you want to reuse the keepaliveAgent over different calls (optional)
-- 
 - `headers:`   _{Object}_   Add in custom headers. The following headers are used by NTLM and cannot be passed: `Connection`, `Authorization` (optional)
 
 if you already got the encrypted password,you should use this two param to replace the 'password' param.

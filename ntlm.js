@@ -68,6 +68,16 @@ var typeflags = {
 						+ flags.NTLM_Negotiate56
 };
 
+function getAuthScheme(options){
+	// HTTP authentication scheme to use in the headers, 'NTLM' by default.
+	// Some servers only advertise 'Negotiate' but accept NTLM messages.
+	return (options && options.auth_scheme) ? options.auth_scheme : 'NTLM';
+}
+
+function escapeRegExp(str){
+	return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function createType1Message(options){
 	if(!options.domain) options.domain = '';
 	if(!options.workstation) options.workstation = '';
@@ -112,18 +122,14 @@ function createType1Message(options){
 	if(workstation.length !=0) buf.write(workstation, pos, workstation.length, 'ascii'); pos += workstation.length; // workstation string
 	if(domain.length !=0)      buf.write(domain     , pos, domain.length     , 'ascii'); pos += domain.length; // domain string
 
-	return `${options?.auth_scheme ?? "NTLM"} ` + buf.toString("base64");
+	return getAuthScheme(options) + ' ' + buf.toString('base64');
 }
 
 function parseType2Message(rawmsg, callback, options){
-	var authScheme = options?.auth_scheme ?? "NTLM";
-	var match = rawmsg.match(new RegExp(`${authScheme} (.+)?`));
+	var authScheme = getAuthScheme(options);
+	var match = rawmsg.match(new RegExp(escapeRegExp(authScheme) + ' (.+)?'));
 	if(!match || !match[1]) {
-		callback(
-      new Error(
-        `Couldn't find ${authScheme} in the message type2 coming from the server`
-      )
-    );
+		callback(new Error("Couldn't find " + authScheme + " in the message type2 coming from the server"));
 		return null;
 	}
 
@@ -268,7 +274,7 @@ function createType3Message(msg2, options){
 	ntChallengeResponse.copy(buf, pos); pos += ntChallengeResponse.length;
 	encryptedRandomSessionKeyBytes.copy(buf, pos); pos += encryptedRandomSessionKeyBytes.length;
 
-	return `${options?.auth_scheme ?? "NTLM"} ` + buf.toString("base64");
+	return getAuthScheme(options) + ' ' + buf.toString('base64');
 }
 
 function create_LM_hashed_password_v1(password){
