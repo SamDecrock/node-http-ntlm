@@ -32,6 +32,11 @@ describe('Integration tests', () => {
     // It echoes back the NTLM info, the headers, the method and the body of the authenticated request.
     var app = express();
 
+    // relative redirect, before the NTLM middleware so the redirect itself is not protected (issue #111)
+    app.get('/relative-redirect', function (request, response) {
+      response.redirect(302, '/redirected-relative');
+    });
+
     app.use(ntlm({
       debug: function() {
         var args = Array.prototype.slice.apply(arguments);
@@ -199,6 +204,19 @@ describe('Integration tests', () => {
       var data = JSON.parse(res.body);
       assert.equal(data.ntlm.Authenticated, true);
       assert.equal(data.url, '/redirected');
+      done();
+    });
+  });
+
+  it('follows relative redirect on the first request', (done) => {
+    httpntlm.get(withCredentials({
+      url: "http://localhost:" + HTTP_PORT + "/relative-redirect"
+    }), function (err, res){
+      if(err) return done(err);
+
+      var data = JSON.parse(res.body);
+      assert.equal(data.ntlm.Authenticated, true);
+      assert.equal(data.url, '/redirected-relative');
       done();
     });
   });
